@@ -77,22 +77,5 @@ Make sure you have the following installed on your local development machine:
  4. LiveURL: 
  You can check out the live version of the app [here](#). http://localhost:3000 
 
- ## Folder Structure 
- 
- apparel-e-commerce/
-├── public/                  # Public assets
-├── src/                     # Source code
-│   ├── assets/              # Images, icons, and other assets
-│   ├── components/          # Reusable UI components
-│   ├── hooks/               # Custom hooks
-│   ├── pages/               # Application pages
-│   ├── store/               # Redux or Context state management
-│   ├── styles/              # Global styles and Tailwind config
-│   ├── utils/               # Utility functions
-│   ├── App.jsx              # Main React component
-│   └── main.jsx             # Entry point for Vite
-├── tailwind.config.js       # Tailwind CSS configuration
-├── vite.config.js           # Vite configuration
-├── package.json             # Dependencies and scripts
-└── README.md                # Project documentation
+
 

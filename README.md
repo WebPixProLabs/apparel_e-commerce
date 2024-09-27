@@ -1,4 +1,4 @@
-# Apparel E-Commerce
+# WEARTREN-Z E-Commerce
 
 An e-commerce web application for clothing and apparel built using **React**, **Vite**, and **Tailwind CSS**. This project provides a seamless shopping experience with features like product listing, filtering, and a responsive design.
 

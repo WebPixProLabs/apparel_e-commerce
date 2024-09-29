@@ -40,7 +40,7 @@ const BestSeller = () => {
         ) : (
           <p className="text-center text-gray-500">
             No best sellers available.
-          </p> 
+          </p>
         )}
       </div>
     </div>

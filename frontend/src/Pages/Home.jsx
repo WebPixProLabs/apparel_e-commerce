@@ -4,6 +4,7 @@ import LatestCollection from "../Components/LatestCollection";
 import BestSeller from "../Components/BestSeller";
 import OurPolicy from "../Components/OurPolicy";
 import NewsLetter from "../Components/NewsLetter";
+import Footer from "../Components/Footer";
 
 const Home = () => {
   return (
@@ -13,6 +14,7 @@ const Home = () => {
       <BestSeller />
       <OurPolicy />
       <NewsLetter/>
+      
     </div>
   );
 };

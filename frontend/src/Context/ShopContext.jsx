@@ -48,6 +48,22 @@ export const ShopContextProvider = ({ children }) => {
     return totalcount;
   };
 
+
+  const updateQuantity = async(itemId, size, quantity) => {
+
+    let cartData = structuredClone (cartItems);
+    cartData[itemId][size] = quantity;
+    setCartItems(cartData);
+    if (quantity === 0) {
+      toast.success("Product removed from Cart");
+      // Optionally, remove the size key if needed for a cleaner structure
+      delete cartData[itemId][size];
+      // Remove item if all sizes are empty
+      if (Object.keys(cartData[itemId]).length === 0) {
+        delete cartData[itemId];
+      }
+  }
+}
   const value = {
     products,
     currency,
@@ -59,6 +75,7 @@ export const ShopContextProvider = ({ children }) => {
     cartItems,
     addToCart,
     getCartCount,
+    updateQuantity
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

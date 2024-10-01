@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { products } from "../assets/frontend_assets/assets.js";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export const ShopContext = createContext();
 
@@ -10,13 +11,14 @@ export const ShopContextProvider = ({ children }) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const navigate = useNavigate();
 
   const addToCart = async (itemId, size) => {
     if (!size) {
       toast.error("Select Product Size");
       return;
     }
-   
+
     let cartData = structuredClone(cartItems);
     if (cartData[itemId]) {
       if (cartData[itemId][size]) {
@@ -48,10 +50,8 @@ export const ShopContextProvider = ({ children }) => {
     return totalCount;
   };
 
-
-  const updateQuantity = async(itemId, size, quantity) => {
-
-    let cartData = structuredClone (cartItems);
+  const updateQuantity = async (itemId, size, quantity) => {
+    let cartData = structuredClone(cartItems);
     cartData[itemId][size] = quantity;
     setCartItems(cartData);
     if (quantity === 0) {
@@ -62,31 +62,33 @@ export const ShopContextProvider = ({ children }) => {
       if (Object.keys(cartData[itemId]).length === 0) {
         delete cartData[itemId];
       }
-  }
-}
+    }
+  };
 
-const getCartAmount = () => {
-  let totalAmount = 0;
+  const getCartAmount = () => {
+    let totalAmount = 0;
 
-  // Loop through the cartItems to calculate total amount
-  for (const itemId in cartItems) {
-    const itemInfo = products.find((product) => product._id === itemId);
-    
-    // Ensure itemInfo is defined before proceeding
-    if (itemInfo) {
-      for (const size in cartItems[itemId]) {
-        const quantity = cartItems[itemId][size];
+    // Loop through the cartItems to calculate total amount
+    for (const itemId in cartItems) {
+      const itemInfo = products.find((product) => product._id === itemId);
 
-        // Only calculate total for positive quantities
-        if (quantity > 0) {
-          totalAmount += itemInfo.price * quantity;
+      // Ensure itemInfo is defined before proceeding
+      if (itemInfo) {
+        for (const size in cartItems[itemId]) {
+          const quantity = cartItems[itemId][size];
+
+          // Only calculate total for positive quantities
+          if (quantity > 0) {
+            totalAmount += itemInfo.price * quantity;
+          }
         }
       }
     }
-  }
-  
-  return totalAmount; // Return the total amount
-};
+
+    return totalAmount; // Return the total amount
+  };
+
+
 
   const value = {
     products,
@@ -100,7 +102,8 @@ const getCartAmount = () => {
     addToCart,
     getCartCount,
     updateQuantity,
-    getCartAmount
+    getCartAmount,
+    navigate
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

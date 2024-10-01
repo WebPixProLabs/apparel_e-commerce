@@ -33,19 +33,19 @@ export const ShopContextProvider = ({ children }) => {
   };
 
   const getCartCount = () => {
-    let totalcount = 0;
+    let totalCount = 0;
     for (const items in cartItems) {
       for (const item in cartItems[items]) {
         try {
           if (cartItems[items][item] > 0) {
-            totalcount += cartItems[items][item];
+            totalCount += cartItems[items][item];
           }
         } catch (e) {
           console.log(e);
         }
       }
     }
-    return totalcount;
+    return totalCount;
   };
 
 
@@ -64,6 +64,30 @@ export const ShopContextProvider = ({ children }) => {
       }
   }
 }
+
+const getCartAmount = () => {
+  let totalAmount = 0;
+
+  // Loop through the cartItems to calculate total amount
+  for (const itemId in cartItems) {
+    const itemInfo = products.find((product) => product._id === itemId);
+    
+    // Ensure itemInfo is defined before proceeding
+    if (itemInfo) {
+      for (const size in cartItems[itemId]) {
+        const quantity = cartItems[itemId][size];
+
+        // Only calculate total for positive quantities
+        if (quantity > 0) {
+          totalAmount += itemInfo.price * quantity;
+        }
+      }
+    }
+  }
+  
+  return totalAmount; // Return the total amount
+};
+
   const value = {
     products,
     currency,
@@ -75,7 +99,8 @@ export const ShopContextProvider = ({ children }) => {
     cartItems,
     addToCart,
     getCartCount,
-    updateQuantity
+    updateQuantity,
+    getCartAmount
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

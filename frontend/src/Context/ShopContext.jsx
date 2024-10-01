@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { products } from "../assets/frontend_assets/assets.js";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 
 export const ShopContext = createContext();
 
@@ -16,6 +16,7 @@ export const ShopContextProvider = ({ children }) => {
       toast.error("Select Product Size");
       return;
     }
+   
     let cartData = structuredClone(cartItems);
     if (cartData[itemId]) {
       if (cartData[itemId][size]) {
@@ -28,6 +29,7 @@ export const ShopContextProvider = ({ children }) => {
       cartData[itemId][size] = 1;
     }
     setCartItems(cartData);
+    toast.success("Item added to cart successfully!");
   };
 
   const getCartCount = () => {

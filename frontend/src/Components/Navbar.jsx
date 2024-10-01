@@ -91,7 +91,7 @@ const Navbar = () => {
             className="py-2 pl-5 border"
             to="/"
           >
-            {" "}
+            
             HOME
           </NavLink>
           <NavLink
@@ -99,7 +99,7 @@ const Navbar = () => {
             className="py-2 pl-5 border"
             to="/collection"
           >
-            {" "}
+            
             COLLECTION
           </NavLink>
           <NavLink
@@ -107,16 +107,16 @@ const Navbar = () => {
             className="py-2 pl-5 border"
             to="/about"
           >
-            {" "}
-            ABOUT{" "}
+            
+            ABOUT
           </NavLink>
           <NavLink
             onClick={() => setVisible(false)}
             className="py-2 pl-5 border"
             to="/contact"
           >
-            {" "}
-            CONTACT{" "}
+            
+            CONTACT
           </NavLink>
         </div>
       </div>

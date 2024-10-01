@@ -12,13 +12,12 @@ import Orders from "./Pages/Order";
 import Navbar from './Components/Navbar';
 import Footer from "./Components/Footer"
 import SearchBar from './Components/SearchBar';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast, { Toaster } from 'react-hot-toast';
 
 const App = () => {
   return (
    <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
-   <ToastContainer/>
+   <Toaster position="top-center" reverseOrder={false} />
     <Navbar/>
     <SearchBar/>
    <Routes>

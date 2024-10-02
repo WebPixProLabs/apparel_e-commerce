@@ -14,6 +14,7 @@ import Footer from "./Components/Footer"
 import SearchBar from './Components/SearchBar';
 import toast, { Toaster } from 'react-hot-toast';
 
+
 const App = () => {
   return (
    <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>

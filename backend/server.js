@@ -20,6 +20,7 @@ app.use(express.json());
 app.use(cors());
 
 /* API Endpoints */
+
 app.use('/api/user', userRouter);
 app.get('/', (req, res) => {
     res.send('API Working');

@@ -4,12 +4,40 @@ import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 
 const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
 // Route for userLogin
 const UserLogin = async (req, res) => {
-  // Implement the UserLogin function here
+
+  try {
+    const { email, password } = req.body;
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "User Does not Exist" });
+    }
+    
+    /*  Check if the provided password matches the hashed password in the database */
+    
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "Invalid credentials." });
+    }
+
+    /* If the password is correct, create and return a JWT token */
+    
+    const token = createToken(user._id);
+    return res
+      .status(200)
+      .json({ success: true, token, msg: "Login successful." });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ success: false, message: e.message });
+  }
 };
 
 // Route for userRegister
@@ -19,21 +47,32 @@ const UserRegister = async (req, res) => {
 
     // Check if all fields are provided
     if (!name || !email || !password) {
-      return res.status(400).json({ success: false, msg: "All fields are required." });
+      return res
+        .status(400)
+        .json({ success: false, msg: "All fields are required." });
     }
 
     // Checking if user already exists
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ success: false, msg: "User already exists in DB." });
+      return res
+        .status(400)
+        .json({ success: false, msg: "User already exists in DB." });
     }
 
     // Validating email format and strong password
     if (!validator.isEmail(email)) {
-      return res.status(400).json({ success: false, msg: "Please enter a valid email." });
+      return res
+        .status(400)
+        .json({ success: false, msg: "Please enter a valid email." });
     }
     if (password.length < 8) {
-      return res.status(400).json({ success: false, msg: "Please enter a strong password (minimum 8 characters)." });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          msg: "Please enter a strong password (minimum 8 characters).",
+        });
     }
 
     // Hashing password

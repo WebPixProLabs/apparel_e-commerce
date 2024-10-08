@@ -1,34 +1,19 @@
 import multer from "multer";
 import path from "path";
 
-// Configure storage options for Multer
+// Set the storage configuration for multer
 const storage = multer.diskStorage({
-    destination: function (req, file, callback) {
-      callback(null, path.join(process.cwd(), "./uploads/")); // Use process.cwd() instead
-    },
-    filename: function (req, file, callback) {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      callback(null, uniqueSuffix + "-" + file.originalname);
-    },
-  });
-  
-
-// Create the upload middleware
-const upload = multer({
-    storage,
-    limits: { fileSize: 2 * 1024 * 1024 }, // Optional: Limit file size to 2MB
-    fileFilter: (req, file, callback) => {
-        // Restrict file type if needed (e.g., allow only images)
-        const allowedTypes = /jpeg|jpg|png|gif/;
-        const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimeType = allowedTypes.test(file.mimetype);
-
-        if (extName && mimeType) {
-            return callback(null, true);
-        } else {
-            callback(new Error("Only image files are allowed!"));
-        }
-    },
+  destination: (req, file, cb) => {
+    // Store files in the 'uploads' directory, ensure it exists
+    cb(null, path.resolve('uploads')); // Use 'path.resolve' to get the absolute path
+  },
+  filename: (req, file, cb) => {
+    // Create a unique filename using Date.now() to avoid conflicts
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
 });
+
+// Initialize the multer instance with the storage configuration
+const upload = multer({ storage: storage });
 
 export default upload;

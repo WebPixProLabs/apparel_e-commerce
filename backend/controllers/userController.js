@@ -2,6 +2,8 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
+import dotenv from "dotenv";
+
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -97,8 +99,40 @@ const UserRegister = async (req, res) => {
 };
 
 // Route for AdminLogin
+// Load environment variables from .env file
+dotenv.config();
+
 const AdminLogin = async (req, res) => {
-  // Implement the AdminLogin function here
+  try {
+    // Destructure email and password from the request body
+    const { email, password } = req.body;
+
+    // Log the request body for debugging
+    console.log("Request Body:", req.body);
+
+    // Check if the email and password are defined
+    if (!email || !password) {
+      return res.status(400).json({ success: false, msg: "Email and password are required" });
+    }
+
+    // Check if email and password match environment variables
+    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+      // Generate a JWT token using the secret
+      const token = jwt.sign({ email, password }, process.env.JWT_SECRET, { expiresIn: '1h' }); // Token will expire in 1 hour
+
+      // Send the token in the response
+      res.status(200).json({ success: true, token });
+    } else {
+      res.status(401).json({ success: false, msg: "Invalid email or password" });
+    }
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
+
+export default AdminLogin;
+
+
 
 export { UserLogin, UserRegister, AdminLogin };

@@ -9,7 +9,7 @@ import Login from "./components/Login";
 import toast, { Toaster } from 'react-hot-toast';
 
 
- export const backendUrl = import.meta.env.VITE_BACKEND_URL
+export const backendUrl = import.meta.env.VITE_BACKEND_URL
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token')? localStorage.getItem("token"):'');
 

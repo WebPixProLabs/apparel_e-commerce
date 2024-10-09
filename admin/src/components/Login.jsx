@@ -40,7 +40,6 @@ const Login = ({setToken}) => {
         </div>
         <button type='submit' className='mt-2 w-full py-2 px-4 rounded-md text-white bg-black'> Login Button</button>
         </form>
-        
         </div>
     
     </div>

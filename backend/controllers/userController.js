@@ -5,8 +5,14 @@ import userModel from "../models/userModel.js";
 import dotenv from "dotenv";
 
 
+dotenv.config();
+
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+};
+
+const createRefreshToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 };
 
 // Route for userLogin

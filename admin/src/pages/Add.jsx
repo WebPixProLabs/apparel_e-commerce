@@ -44,7 +44,7 @@ const Add = ({token}) => {
         // Make the POST request
         const response = await axios.post(backendUrl + "/api/product/add", formData, {
             headers: {
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHdlYXJ0cmVuei5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsImlhdCI6MTcyODQ5OTY0MiwiZXhwIjoxNzI4NTAzMjQyfQ.xWnxPZMq1ZzrlfuY0BAnZbnHZmfDp2t_1wqtpFiIFd4`, // Token is directly displayed here
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHdlYXJ0cmVuei5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsImlhdCI6MTcyODUzMjQxNSwiZXhwIjoxNzI4NTM2MDE1fQ.u4ISHIbOUMlKIlzKXdwIz1ZfioJ-vGH8qtYT6Mp5KDk`, // Token is directly displayed here
                 'Content-Type': 'multipart/form-data', // Specify content type for FormData
             }
         });

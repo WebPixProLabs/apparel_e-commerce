@@ -10,9 +10,12 @@ const BestSeller = () => {
   console.log("Products:", products);
 
   useEffect(() => {
-    const bestProduct = products.filter((item) => item.bestseller);
-    setBestSeller(bestProduct.slice(0, 5));
-  }, []);
+    if (products) { // Check if products are available
+      const bestProduct = products.filter((item) => item.bestseller === true);
+      console.log("Filtered Best Sellers:", bestProduct); // Log filtered best sellers
+      setBestSeller(bestProduct.slice(0, 5));
+    }
+  }, [products]);
 
   return (
     <div className="m-5">

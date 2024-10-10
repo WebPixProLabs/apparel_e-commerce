@@ -3,9 +3,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
 export const currency = "₹";
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHdlYXJ0cmVuei5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsImlhdCI6MTcyODUzNzE5MiwiZXhwIjoxNzI4NTQwNzkyfQ.mSuKkzr1WVTX6drDWFXRS4P8O8qaLMSqINDq_JLqFzw";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHdlYXJ0cmVuei5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsImlhdCI6MTcyODU1ODA1MiwiZXhwIjoxNzI4NTYxNjUyfQ.4B1dAzq994ODxV2WuEHPyxLmT2fgC7nSDo6X_dK78C4";
 
 const List = () => {
   const [list, setList] = useState([]);
@@ -13,9 +12,9 @@ const List = () => {
   // Fetch the product list
   const fetchList = async () => {
     try {
-      const response = await axios.get(`${backendUrl}/api/product/list`, {
+      const response = await axios.get(backendUrl + "/api/product/list", {
         headers: {
-          Authorization: `Bearer ${token}`, // Pass the token here
+          Authorization: `Bearer ${token}`, 
         },
       });
       if (response.data.success) {
@@ -32,42 +31,22 @@ const List = () => {
   // Remove a product
   const removeProduct = async (id) => {
     try {
-      console.log("Attempting to remove product with ID:", id);
-      console.log("Using token for authorization:", token); // Log the token
-  
-      // Use the GET method and pass the product ID as a query parameter
-      const response = await axios.get(`${backendUrl}/api/product/remove`, {
-        params: { delete: id }, // Pass the product ID as a query parameter
-        headers: {
-          Authorization: `Bearer ${token}`, // Use the static token
-        },
+      const response = await axios.delete(`${backendUrl}/api/product/remove/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-  
-      console.log("Response from server:", response.data);
-  
-      // Handle the response
+
       if (response.data.success) {
         toast.success(response.data.message);
-        console.log("Product removed successfully:", response.data.message);
-        await fetchList(); // Re-fetch the updated product list
+        await fetchList();
       } else {
-        toast.error(response.data.message);
-        console.error("Failed to remove product:", response.data.message);
+        toast.error(response.data.message || "Failed to remove product");
       }
     } catch (error) {
-      console.error("Error Deleting the product:", error.message);
-      if (error.response) {
-        console.error("Error Response Data:", error.response.data);
-        console.error("Error Response Status:", error.response.status);
-      }
-      toast.error("Error Deleting the product");
+      console.error("Error removing product:", error);
+      toast.error(error.response?.data?.message || error.message || "An error occurred");
     }
   };
   
-  
-  
-  
-
   useEffect(() => {
     fetchList();
   }, []);
@@ -114,4 +93,4 @@ const List = () => {
   );
 };
 
-export default List;
+export default List; 

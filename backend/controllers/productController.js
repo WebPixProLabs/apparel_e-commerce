@@ -8,6 +8,9 @@ const addProduct = async (req, res) => {
   try {
     // Destructure fields from request body
     const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
+    
+    // Debugging log to check bestseller value
+    console.log("Received bestseller:", bestseller); 
 
     // Check and access uploaded files from req.files
     const image1 = req.files?.image1 ? req.files.image1[0] : null;
@@ -32,33 +35,25 @@ const addProduct = async (req, res) => {
 
     console.log("Uploaded Image URLs:", imagesUrl);
 
-    // Log received images and details
-    // console.log("Received Images:", { image1, image2, image3, image4 });
-    // console.log(name, description, price, category, subCategory, sizes, bestseller);
-    // console.log("Uploaded Image URLs:", imagesUrl);
-
-    // Here, you would typically save the product details along with the image URLs to the database
-    // For example:
-    // await Product.create({ name, description, price, category, subCategory, sizes, bestseller, images: imagesUrl });
-
-    /* saving the cloudinary images to mongodb */
+    // Create the product data object
     const productData = {
       name,
       description,
       category,
       subCategory,
-      price:Number(price),
+      price: Number(price),
       sizes: JSON.parse(sizes),
-      bestseller: bestseller === 'true' ? true : false,
+      bestseller: bestseller === 'true', // This should correctly convert it to boolean
       images: imagesUrl,
       date: Date.now(),
-    }
-    console.log("productData", productData);
+    };
 
+    console.log("productData:", productData); // Log the final product data to check bestSeller
+
+    // Save the product to the database
     const product = new productModel(productData);
-    await product.save()
-    // res.json({success:false, message:"Product Added"});
-    
+    await product.save();
+
     // Return a response indicating success
     res.json({ success: true, message: "Product added successfully", imagesUrl });
 
@@ -67,6 +62,7 @@ const addProduct = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 // List product Function
 const listProducts = async (req, res) => {

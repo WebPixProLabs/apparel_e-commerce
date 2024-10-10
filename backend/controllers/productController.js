@@ -82,43 +82,42 @@ const listProducts = async (req, res) => {
 };
 
 // Remove product Function
-
 const removeProduct = async (req, res) => {
-  try {
-      // Log the incoming request body
-      console.log("Request Body:", req.body);
+    try {
+        // Extract the product ID from the request parameters
+        const productId = req.params.id; // Assuming you're using /remove/:id route
 
-      // Extract the product ID from the request body
-      const productId = req.body.delete;
+        // Check if the product ID is provided
+        if (!productId) {
+            return res.status(400).json({ success: false, message: "Product ID is required" });
+        }
 
-      // Check if the product ID is provided
-      if (!productId) {
-          return res.status(400).json({ success: false, message: "Product ID is required" });
-      }
+        // Log the product ID we are trying to delete
+        console.log("Attempting to delete product with ID:", productId);
 
-      // Log the product ID we are trying to delete
-      console.log("Attempting to delete product with ID:", productId);
+        // Find the product by ID to check if it exists
+        const productToDelete = await productModel.findById(productId);
+        
+        // Check if the product exists
+        if (!productToDelete) {
+            console.log("Product not found:", productId);
+            return res.status(404).json({ success: false, message: "Product not found" });
+        }
 
-      // Find the product by ID to check if it exists
-      const productToDelete = await productModel.findById(productId);
-      
-      // Check if the product exists
-      if (!productToDelete) {
-          console.log("Product not found:", productId);
-          return res.status(404).json({ success: false, message: "Product not found" });
-      }
-
-      // If it exists, delete the product
-      await productModel.findByIdAndDelete(productId);
-      console.log("Product deleted successfully:", productId);
-      
-      // Return a success response
-      res.status(200).json({ success: true, message: "Product removed" });
-  } catch (error) {
-      console.error("Error deleting product:", error.message);
-      res.status(500).json({ success: false, message: error.message });
-  }
+        // If it exists, delete the product
+        await productModel.findByIdAndDelete(productId);
+        console.log("Product deleted successfully:", productId);
+        
+        // Return a success response
+        res.status(200).json({ success: true, message: "Product removed" });
+    } catch (error) {
+        console.error("Error deleting product:", error.message);
+        res.status(500).json({ success: false, message: "An error occurred while deleting the product." });
+    }
 };
+
+export default removeProduct;
+
 
 // Single product info Function
 const singleProduct = async (req, res) => {

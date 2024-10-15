@@ -43,7 +43,7 @@ const addProduct = async (req, res) => {
       subCategory,
       price: Number(price),
       sizes: JSON.parse(sizes),
-      bestseller: bestseller === 'true', // This should correctly convert it to boolean
+      bestseller: bestseller === 'true', 
       images: imagesUrl,
       date: Date.now(),
     };

@@ -1,13 +1,20 @@
-import React, { useState } from "react";
-import { GoogleLogin } from "@react-oauth/google"; // Import GoogleLogin from react-oauth-google
+import React, { useContext, useEffect, useState } from "react";
+// import { GoogleLogin } from "@react-oauth/google"; // Commented out GoogleLogin import
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import toast from "react-hot-toast"; // Optional: To show toast notifications
+import { ShopContext } from "../Context/ShopContext";
+import axios from "axios";
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Login");
-  const navigate = useNavigate(); // Initialize useNavigate
+
+  const { token, setToken, navigate, backendUrl } = useContext(ShopContext);
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");  
 
   // Handle Google OAuth Success Response
+  /*
   const handleGoogleSuccess = (response) => {
     if (response?.credential) {
       // Decode the JWT to get user info
@@ -30,12 +37,47 @@ const Login = () => {
     console.error("Google Sign-In Error: ", error);
     toast.error("Google Sign-In Failed!");
   };
+  */
 
   const HandleOnSubmit = async (e) => {
     e.preventDefault();
-    // Your login logic here if applicable
+    try {
+      if (currentState === "Signup") { // Use === for comparison
+        const response = await axios.post(backendUrl + '/api/user/register', { name, email, password });
+        console.log(response);
+        toast.success("Registration successful");
+
+        if (response.data.success) {
+          setToken(response.data.token);
+          localStorage.setItem("token", response.data.token);
+        } else {
+          toast.error(response.data.message);
+        }
+      } else { // Handle the login state
+        const response = await axios.post(backendUrl + '/api/user/login', { email, password });
+        console.log(response);
+        toast.success("Login successful");
+        setToken(response.data.token); // Example of setting token
+        localStorage.setItem("token", response.data.token);
+        navigate("/"); // Redirect after login
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("An error occurred");
+    }
   };
 
+  useEffect(()=>{
+    if(token) {
+      navigate('/');
+    }
+  },[token])
+
+  useEffect(() => {
+    if (!token && localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
   return (
     <>
       <form
@@ -56,6 +98,8 @@ const Login = () => {
             className="w-full px-3 py-2 border border-gray-800"
             placeholder="Name"
             required
+            onChange={(e) => setName(e.target.value)}
+            value={name}
           />
         )}
 
@@ -64,6 +108,8 @@ const Login = () => {
           className="w-full px-3 py-2 border border-gray-800"
           placeholder="Email"
           required
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
         />
 
         <input
@@ -71,6 +117,8 @@ const Login = () => {
           className="w-full px-3 py-2 border border-gray-800"
           placeholder="Password"
           required
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
         />
 
         <div className="w-full flex justify-between text-sm mt-[-8px]">
@@ -97,12 +145,14 @@ const Login = () => {
         </button>
 
         {/* Google Login Button Integration */}
+        {/* 
         <div className="mt-4">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={handleGoogleFailure}
           />
         </div>
+        */}
       </form>
     </>
   );

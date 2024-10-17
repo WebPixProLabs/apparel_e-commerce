@@ -15,14 +15,14 @@ const Product = () => {
     const foundProduct = products.find((item) => item._id === productId);
     if (foundProduct) {
       setProductData(foundProduct);
-      setImage(foundProduct.image[0]);
+      setImage(foundProduct.images[0]); // Fixed the typo: productData.images
     }
   };
 
   useEffect(() => {
     fetchProductData();
   }, [productId, products]);
-  
+
   return productData ? (
     <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
       {/* Product Data */}
@@ -30,29 +30,29 @@ const Product = () => {
         {/* Product Images */}
         <div className="flex flex-1 flex-col-reverse gap-3 sm:flex-row">
           <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll  justify-between sm:justify-normal sm:w-[18.7%] w-full">
-            {productData.image.map((item, idx) => (
+            {productData.images.map((item, idx) => ( // Fixed typo
               <img
                 onClick={() => setImage(item)}
                 src={item}
                 key={idx}
                 className="w-[24%] sm:w-full sm:mb-3 flex-shrink cursor-pointer"
-                alt=""
+                alt={productData.name} // Added alt text for accessibility
               />
             ))}
           </div>
-          <div className="w-full sm:w-[80%] ">
-            <img src={image} alt="" className="w-full h-auto" />
+          <div className="w-full sm:w-[80%]">
+            <img src={image} alt={productData.name} className="w-full h-auto" />
           </div>
         </div>
         {/* Product Info */}
         <div className="flex-1">
           <h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
           <div className="flex items-center gap-1 mt-2">
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_dull_icon} alt="" className="w-3 5" />
+            <img src={assets.star_icon} alt="Star rating" className="w-3 5" />
+            <img src={assets.star_icon} alt="Star rating" className="w-3 5" />
+            <img src={assets.star_icon} alt="Star rating" className="w-3 5" />
+            <img src={assets.star_icon} alt="Star rating" className="w-3 5" />
+            <img src={assets.star_dull_icon} alt="Star rating" className="w-3 5" />
             <p className="pl-2">(122)</p>
           </div>
           <p className="mt-5 text-3xl font-medium">
@@ -64,17 +64,21 @@ const Product = () => {
           <div className="flex flex-col gap-4 my-8">
             <p>Select Size</p>
             <div className="flex gap-2">
-              {productData.sizes.map((item, idx) => (
-                <button
-                  className={`border py-2 px-4 bg-gray-100 ${
-                    item === size ? "border-orange-500" : ""
-                  }`}
-                  key={idx}
-                  onClick={() => setSize(item)}
-                >
-                  {item}
-                </button>
-              ))}
+              {productData.sizes && productData.sizes.length > 0 ? ( // Ensure sizes exist
+                productData.sizes.map((item, idx) => (
+                  <button
+                    className={`border py-2 px-4 bg-gray-100 ${
+                      item === size ? "border-orange-500" : ""
+                    }`}
+                    key={idx}
+                    onClick={() => setSize(item)}
+                  >
+                    {item}
+                  </button>
+                ))
+              ) : (
+                <p>No sizes available</p>
+              )}
             </div>
           </div>
           <button
@@ -86,13 +90,13 @@ const Product = () => {
           <hr className="mt-8 sm:w-4/5" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
             <p>100% original Product!</p>
-            <p>Cash On Delivery is availble for this Product</p>
+            <p>Cash On Delivery is available for this Product</p>
             <p>Easy Exchange and Return Policy within 7 Days</p>
           </div>
         </div>
       </div>
 
-      {/* Description & Review Section  */}
+      {/* Description & Review Section */}
       <div className="mt-20">
         <div className="flex">
           <b className="border px-5 py-3 text-sm"> Description </b>
@@ -107,10 +111,10 @@ const Product = () => {
             for your unique taste and style.
           </p>
           <p>
-            E-commerce website typically display products or serves the products
-            along with detailed description , images, prices, and any availble
-            Variations (eg: sizes,colors,material) Each Products is Perfectly
-            designed for better outfit
+            E-commerce websites typically display products along with detailed
+            descriptions, images, prices, and any available variations (e.g.,
+            sizes, colors, materials). Each product is perfectly designed for a
+            better outfit.
           </p>
         </div>
       </div>

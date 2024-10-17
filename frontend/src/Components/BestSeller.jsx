@@ -7,12 +7,9 @@ const BestSeller = () => {
   const { products } = useContext(ShopContext);
   const [bestseller, setBestSeller] = useState([]);
 
-  console.log("Products:", products);
-
   useEffect(() => {
-    if (products) { // Check if products are available
+    if (products) {
       const bestProduct = products.filter((item) => item.bestseller === true);
-      console.log("Filtered Best Sellers:", bestProduct); // Log filtered best sellers
       setBestSeller(bestProduct.slice(0, 5));
     }
   }, [products]);
@@ -36,7 +33,7 @@ const BestSeller = () => {
               key={item._id}
               id={item._id}
               name={item.name}
-              image={item.image}
+              image={item.images[0]} 
               price={item.price}
             />
           ))

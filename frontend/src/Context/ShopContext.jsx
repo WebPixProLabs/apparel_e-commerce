@@ -73,7 +73,6 @@ export const ShopContextProvider = ({ children }) => {
   // Fetch product data from the backend
   const getProductData = async () => {
     try {
-      console.log("Backend URL:", backendUrl); // Log the URL
       const response = await axios.get(`${backendUrl}/api/product/list`);
       console.log("API Response:", response.data);
       

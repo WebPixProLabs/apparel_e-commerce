@@ -27,7 +27,7 @@ const Cart = () => {
               quantity: cartItems[productId][size],
               name: product.name,
               price: product.price,
-              image: product.image[0], // Assuming product.image is an array
+              image: product.images[0], // Assuming product.image is an array
             });
           }
         }

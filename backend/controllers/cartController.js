@@ -1,5 +1,5 @@
 // cartController.js
-
+import userModel from "../models/userModel.js"
 // Function to add items to the cart
 export const addToCart = async (req, res) => {
     // Function implementation here

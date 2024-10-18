@@ -5,7 +5,7 @@ import { addToCart, updateCart, getUserCart } from "../controllers/cartControlle
 const cartRouter = express.Router();
 
 
-cartRouter.get("/get", authUser, getUserCart);  
+cartRouter.post("/get", authUser, getUserCart);  
 cartRouter.post("/add",authUser, addToCart);  
 cartRouter.post("/update",authUser, updateCart); 
 

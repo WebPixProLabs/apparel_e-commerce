@@ -32,16 +32,18 @@ export const ShopContextProvider = ({ children }) => {
       cartData[itemId] = { [size]: 1 };
     }
     setCartItems(cartData);
-    toast.success("Item added to cart successfully!");
 
+    // If token exists, sync the changes to the backend
     if (token) {
       try {
-        await axios.post(backendUrl+'/api/cart/add', {itemId, size}, {headers:{token}});
-        toast.success("Item added to cart on server.");
+        await axios.post(backendUrl + '/api/cart/add', { itemId, size }, { headers: { token } });
+        toast.success("Item added to cart");
       } catch (error) {
         console.error("Error adding to cart:", error);
         toast.error("Failed to update cart on server.");
       }
+    } else {
+      toast.success("Item added to cart successfully!");
     }
   };
 
@@ -76,11 +78,12 @@ export const ShopContextProvider = ({ children }) => {
     if (token) {
       try {
         await axios.post(`${backendUrl}/api/cart/update`, { itemId, size, quantity }, { headers: { token } });
-        toast.success("Cart updated successfully");
       } catch (error) {
         console.error("Error updating cart:", error);
         toast.error("Failed to update the cart");
       }
+    } else if (quantity === 0) {
+      toast.success("Product removed from Cart");
     }
   };
 

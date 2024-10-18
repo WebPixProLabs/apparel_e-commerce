@@ -1,19 +1,22 @@
 import express from 'express'
-import orderModel from "../models/orderModel"
 import adminAuth from "../middlewares/adminAuth"
 import { placeOrder, placeOrderStripe, placeOrderRazorPay, getAllOrders, userOrder, updateStatus } from "../controllers/orderController"
 
 const orderRouter = express.Router()
 
 {/* Admin  */}
-orderRouter.post('/list',adminAuth,getAllOrders);
-orderRouter.patch('/status',adminAuth,updateStatus);
+
+orderRouter.post('/list', adminAuth,getAllOrders)
+orderRouter.post('/status', adminAuth,updateStatus)
+
 {/* Payment Endpoints */}
-orderRouter.post('/placeOrder',placeOrder);
-orderRouter.post('/placeOrderStripe',placeOrderStripe);
-orderRouter.post('/placeOrderRazorPay',placeOrderRazorPay);
+orderRouter.post('/place', authUser, placeOrder);
+orderRouter.post('/stripe', authUser, placeOrderStripe)
+orderRouter.post('/razorpay', authUser,placeOrderRazorPay)
 
-orderRouter.get('/userOrder',adminAuth,userOrder);
+{/* user Feature */}
 
+orderRouter.post('/userorder',authUser,userOrder);
 
+export default orderRouter
 

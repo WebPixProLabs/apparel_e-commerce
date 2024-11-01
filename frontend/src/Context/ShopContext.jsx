@@ -62,11 +62,20 @@ export const ShopContextProvider = ({ children }) => {
 
 
   // Get the total count of items in the cart
+  
   const getCartCount = () => {
+    if (!cartItems || typeof cartItems !== 'object') {
+        return 0; // Return 0 if cartItems is null, undefined, or not an object
+    }
+
     return Object.values(cartItems).reduce((totalCount, itemSizes) => {
-      return totalCount + Object.values(itemSizes).reduce((sum, quantity) => sum + quantity, 0);
+        // Ensure itemSizes is an object before proceeding
+        if (typeof itemSizes === 'object' && itemSizes !== null) {
+            return totalCount + Object.values(itemSizes).reduce((sum, quantity) => sum + (quantity || 0), 0);
+        }
+        return totalCount; // If itemSizes is not an object, return totalCount as is
     }, 0);
-  };
+};
 
   const updateQuantity = async (itemId, size, quantity) => {
     let cartData = structuredClone(cartItems);

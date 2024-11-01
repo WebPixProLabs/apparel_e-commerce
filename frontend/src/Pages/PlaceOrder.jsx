@@ -48,6 +48,7 @@ const PlaceOrder = () => {
       console.log(orderItems);
       // Add code for submitting the order data to the backend
       
+      
     } catch (error) {
       console.log(error);
       toast.error("Unexpected Error");

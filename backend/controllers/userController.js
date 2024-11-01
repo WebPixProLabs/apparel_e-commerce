@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import dotenv from "dotenv";
 
-
+// Load environment variables from .env file once
 dotenv.config();
 
 const createToken = (id) => {
@@ -12,75 +12,57 @@ const createToken = (id) => {
 };
 
 const createRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-// Route for userLogin
+// Route for UserLogin
 const UserLogin = async (req, res) => {
-
   try {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "User Does not Exist" });
-    }
-    
-    /*  Check if the provided password matches the hashed password in the database */
-    
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if (!isPasswordMatch) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "Invalid credentials." });
+      return res.status(400).json({ success: false, msg: "User does not exist" });
     }
 
-    /* If the password is correct, create and return a JWT token */
-    
-    const token = createToken(user._id);
-    return res
-      .status(200)
-      .json({ success: true, token, msg: "Login successful." });
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({ success: false, msg: "Invalid credentials." });
+    }
+
+    // Generate access token and refresh token
+    const accessToken = createToken(user._id);
+    const refreshToken = createRefreshToken(user._id);
+
+    // Return both tokens to the client
+    return res.status(200).json({ success: true, accessToken, refreshToken, msg: "Login successful." });
   } catch (e) {
     console.error(e);
     res.status(500).json({ success: false, message: e.message });
   }
 };
 
-// Route for userRegister
+// Route for UserRegister
 const UserRegister = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     // Check if all fields are provided
     if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "All fields are required." });
+      return res.status(400).json({ success: false, msg: "All fields are required." });
     }
 
     // Checking if user already exists
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "User already exists in DB." });
+      return res.status(400).json({ success: false, msg: "User already exists in DB." });
     }
 
     // Validating email format and strong password
     if (!validator.isEmail(email)) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "Please enter a valid email." });
+      return res.status(400).json({ success: false, msg: "Please enter a valid email." });
     }
     if (password.length < 8) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          msg: "Please enter a strong password (minimum 8 characters).",
-        });
+      return res.status(400).json({ success: false, msg: "Please enter a strong password (minimum 8 characters)." });
     }
 
     // Hashing password
@@ -105,40 +87,48 @@ const UserRegister = async (req, res) => {
 };
 
 // Route for AdminLogin
-// Load environment variables from .env file
-dotenv.config();
-
 const AdminLogin = async (req, res) => {
   try {
-    // Destructure email and password from the request body
     const { email, password } = req.body;
 
-    // Log the request body for debugging
-    console.log("Request Body:", req.body);
-
-    // Check if the email and password are defined
     if (!email || !password) {
       return res.status(400).json({ success: false, msg: "Email and password are required" });
     }
 
-    // Check if email and password match environment variables
-    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      // Generate a JWT token using the secret
-      const token = jwt.sign({ email, password }, process.env.JWT_SECRET, { expiresIn: '1h' }); // Token will expire in 1 hour
+    // Debugging - Log to ensure the environment variables are loaded correctly
+    console.log("Admin email:", process.env.ADMIN_EMAIL);
+    console.log("JWT_SECRET:", process.env.JWT_SECRET);
+    console.log("JWT_REFRESH_SECRET:", process.env.JWT_SECRET);
 
-      // Send the token in the response
-      res.status(200).json({ success: true, token });
+    // Compare with environment variables
+    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+      const accessToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const refreshToken = createRefreshToken(email); // Generates refresh token with refresh secret
+
+      return res.status(200).json({ success: true, accessToken, refreshToken });
     } else {
-      res.status(401).json({ success: false, msg: "Invalid email or password" });
+      return res.status(401).json({ success: false, msg: "Invalid email or password" });
     }
   } catch (error) {
-    console.log("Error:", error);
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Error during admin login:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
-export default AdminLogin;
 
 
+// Route for refreshAccessToken
+export const refreshAccessToken = (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(401).json({ message: "Refresh token required" });
 
+  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: "Invalid refresh token" });
+
+    const newAccessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    res.status(200).json({ accessToken: newAccessToken });
+  });
+};
+
+// Export all functions
 export { UserLogin, UserRegister, AdminLogin };

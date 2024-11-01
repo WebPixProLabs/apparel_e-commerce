@@ -74,31 +74,36 @@ export const updateCart = async (req, res) => {
 
 // Function to get user cart data
 export const getUserCart = async (req, res) => {
-    // Function implementation here
     try {
-        // Destructure userId from request body
-        const { userId } = req.body;
+        // User IDs you provided
+        const userIds = [
+            "6703652ea159a4420ec3940d",
+            "67111caafb39a9638e0b11ac"
+        ];
 
-        // Validate userId
-        if (!userId) {
-            return res.status(400).json({ success: false, message: 'User ID is required' });
+        // Array to hold cart data for both users
+        const cartsData = [];
+
+        // Fetch cart data for each user
+        for (const userId of userIds) {
+            const userData = await userModel.findById(userId).lean();
+
+            // Check if user exists
+            if (!userData) {
+                cartsData.push({ userId, success: false, message: 'User not found' });
+                continue; // Skip to the next user ID
+            }
+
+            // Extract cartData from userData
+            const cartData = userData.cartData || []; // Provide a default value in case cartData is undefined
+            cartsData.push({ userId, success: true, cartData });
         }
 
-        // Find user by ID
-        const userData = await userModel.findById(userId).lean(); // Using .lean() for better performance
-
-        // Check if user exists
-        if (!userData) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
-
-        // Extract cartData from userData
-        const cartData = userData.cartData; // This is safe now since userData is validated
-
-        // Send response with cart data
-        res.status(200).json({ success: true, cartData });
+        // Send response with all users' cart data
+        res.status(200).json({ success: true, cartsData });
     } catch (error) {
-        console.error("Error fetching cart data:", error); // More specific logging
+        console.error("Error fetching cart data:", error);
         res.status(500).json({ success: false, message: 'Error fetching cart data' });
     }
 };
+

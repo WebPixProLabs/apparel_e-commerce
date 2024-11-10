@@ -13,46 +13,69 @@ export const ShopContextProvider = ({ children }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
   const [products, setProducts] = useState([]);
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState(localStorage.getItem('token') || ''); // Initialize with the token from local storage
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      getUserCart(token);
+    }
+  }, [token]);
 
   // Function to add an item to the cart
   const addToCart = async (itemId, size) => {
+    // Check for selected size
     if (!size) {
-      toast.error("Select Product Size");
-      return;
+        toast.error("Select Product Size");
+        return;
     }
-
-    // Clone current cart items
+    // Update local cart state
     let cartData = structuredClone(cartItems);
-    // Update quantity in the cart
     if (cartData[itemId]) {
-      cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
+        cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
     } else {
-      cartData[itemId] = { [size]: 1 };
+        cartData[itemId] = { [size]: 1 };
     }
     setCartItems(cartData);
 
-    // If token exists, sync the changes to the backend
+    // Check if user is authenticated
     if (token) {
-      try {
-        await axios.post(backendUrl + '/api/cart/add', { itemId, size }, { headers: { token } });
-        toast.success("Item added to cart");
-      } catch (error) {
-        console.error("Error adding to cart:", error);
-        toast.error("Failed to update cart on server.");
-      }
+        try {
+            const response = await axios.post(`${backendUrl}/api/cart/add`, { itemId, size }, { headers: { Authorization: `Bearer ${token}` } });
+            // Success notification
+            toast.success("Item added to cart");
+            // Optionally, update cart state with the response data
+            // setCartItems(response.data.cartData); // Uncomment if needed
+        } catch (error) {
+            console.error("Error adding to cart:", error.response ? error.response.data : error.message);
+            // Show error notification
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message); // Show error from the server
+            } else {
+                toast.error("An error occurred while adding to the cart."); // Fallback error message
+            }
+        }
     } else {
-      toast.success("Item added to cart successfully!");
+        toast.success("Item added to cart successfully!"); // This will show even if token is not present
     }
-  };
+};
+
 
   // Get the total count of items in the cart
+  
   const getCartCount = () => {
+    if (!cartItems || typeof cartItems !== 'object') {
+        return 0; // Return 0 if cartItems is null, undefined, or not an object
+    }
+
     return Object.values(cartItems).reduce((totalCount, itemSizes) => {
-      return totalCount + Object.values(itemSizes).reduce((sum, quantity) => sum + quantity, 0);
+        // Ensure itemSizes is an object before proceeding
+        if (typeof itemSizes === 'object' && itemSizes !== null) {
+            return totalCount + Object.values(itemSizes).reduce((sum, quantity) => sum + (quantity || 0), 0);
+        }
+        return totalCount; // If itemSizes is not an object, return totalCount as is
     }, 0);
-  };
+};
 
   const updateQuantity = async (itemId, size, quantity) => {
     let cartData = structuredClone(cartItems);
@@ -63,7 +86,7 @@ export const ShopContextProvider = ({ children }) => {
     } else {
       // If quantity is 0, remove the item size
       delete cartData[itemId][size];
-      toast.success("Product removed from Cart");
+      
 
       // If no more sizes left for the item, remove the item itself
       if (Object.keys(cartData[itemId]).length === 0) {
@@ -77,10 +100,9 @@ export const ShopContextProvider = ({ children }) => {
     // If token exists, sync the changes to the backend
     if (token) {
       try {
-        await axios.post(`${backendUrl}/api/cart/update`, { itemId, size, quantity }, { headers: { token } });
+        await axios.post(`${backendUrl}/api/cart/update`, { itemId, size, quantity }, { headers: { Authorization: `Bearer ${token}` } });
       } catch (error) {
         console.error("Error updating cart:", error);
-        toast.error("Failed to update the cart");
       }
     } else if (quantity === 0) {
       toast.success("Product removed from Cart");
@@ -120,7 +142,9 @@ export const ShopContextProvider = ({ children }) => {
 
   const getUserCart = async (token) => {
     try {
-      const response = await axios.post(backendUrl + '/api/cart/get', {}, { headers: { token } });
+      const response = await axios.post(`${backendUrl}/api/cart/get`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (response.data.success) {
         setCartItems(response.data.cartData);
       } else {
@@ -128,9 +152,11 @@ export const ShopContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error fetching cart:", error);
-      toast.error("Failed to fetch cart data.");
+      toast.error(error.response?.data?.message || "Error fetching cart data.");
     }
   };
+  
+    
 
   useEffect(() => {
     getProductData();

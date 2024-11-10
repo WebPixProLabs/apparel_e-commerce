@@ -49,7 +49,9 @@ const PlaceOrder = () => {
         }
       }
       console.log(orderItems);
-    } catch (e) {
+      // Add code for submitting the order data to the backend
+      
+    } catch (error) {
       console.log(error);
     }
   }

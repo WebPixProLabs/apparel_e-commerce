@@ -13,15 +13,15 @@ import {
 const orderRouter = express.Router();
 
 // Admin Endpoints
-orderRouter.post('/list', adminAuth, getAllOrders);
-orderRouter.post('/status', adminAuth, updateStatus);
+orderRouter.post('/list',getAllOrders);
+orderRouter.post('/status',updateStatus);
 
 // Payment Endpoints
-orderRouter.post('/place',  placeOrder);
-orderRouter.post('/stripe',  placeOrderStripe);
-orderRouter.post('/razorpay',  placeOrderRazorPay);
+orderRouter.post('/place',placeOrder);
+orderRouter.post('/stripe',placeOrderStripe);
+orderRouter.post('/razorpay',placeOrderRazorPay);
 
 // User Routes
-orderRouter.post('/userorders', authUser, userOrder);
+orderRouter.post('/userorders',userOrder);
 
 export default orderRouter;

@@ -4,12 +4,14 @@ import CartTotal from "../Components/CartTotal"
 import { assets } from '../assets/frontend_assets/assets'
 import { ShopContext } from '../Context/ShopContext'
 import toast from "react-hot-toast";
-
+import { useNavigate } from 'react-router-dom'
+import axios from "axios";
 
 
 const PlaceOrder = () => {
-  const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products } = useContext(ShopContext);
-  const [method, setMethod] = useState("COD");
+  const { backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, } = useContext(ShopContext); // Added userId from context
+  const [method, setMethod] = useState("cod");
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -23,37 +25,81 @@ const PlaceOrder = () => {
   });
 
   const handleOnChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setFormData (data => ({...data,[name]: value }))
-  }
+    const { name, value } = event.target;
+    setFormData((data) => ({ ...data, [name]: value }));
+  };
   
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    try {
-      let orderItems = [];
-      for (const itemId in cartItems) {
-        for (const size in cartItems[itemId]) {
-          const quantity = cartItems[itemId][size];
-          if (quantity > 0) {
-            const itemInfo = structuredClone(products.find(product => product._id === itemId));
-            if (itemInfo) {
-              itemInfo.size = size;
-              itemInfo.quantity = quantity;
-              orderItems.push(itemInfo);
-            }
-          }
-        }
-      }
-      console.log(orderItems);
-      // Add code for submitting the order data to the backend
-      
-      
-    } catch (error) {
-      console.log(error);
-      toast.error("Unexpected Error");
+    
+    const userId = "6703652ea159a4420ec3940d";  // Your user ID here
+
+    if (!userId) {
+        toast.error("User ID is required. Please log in.");
+        return;
     }
-  };
+
+    try {
+        let orderItems = [];
+
+        // Build orderItems array from cartItems
+        for (const itemId in cartItems) {
+            for (const size in cartItems[itemId]) {
+                const quantity = cartItems[itemId][size];
+                if (quantity > 0) {
+                    const itemInfo = structuredClone(products.find(product => product._id === itemId));
+                    if (itemInfo) {
+                        itemInfo.size = size;
+                        itemInfo.quantity = quantity;
+                        orderItems.push(itemInfo);
+                    }
+                }
+            }
+        }
+
+        // Define the order data payload
+        const orderData = {
+            userId,  // User ID is now included here
+            items: orderItems,
+            amount: getCartAmount() + delivery_fee,
+            address: {
+                ...formData // Address fields from form data
+            },
+            paymentMethod: method // 'cod' or other methods
+        };
+
+        console.log("Order Data before sending:", orderData);  // Log to check the data
+
+        // Access the backend URL from the environment variable
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;  // Correctly access the backend URL
+
+        if (!backendUrl) {
+            toast.error("Backend URL is missing. Please check your environment settings.");
+            return;
+        }
+
+        // Send API request
+        const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        // Check the response from the server
+        if (response.data.success) {
+            setCartItems({});  // Clear cart after successful order
+            navigate('/orders');  // Redirect to orders page
+            toast.success("Order placed successfully!");  // Show success message
+        } else {
+            toast.error(response.data.message);  // Show error message from response
+        }
+
+    } catch (error) {
+        console.error(error);
+        toast.error("Unexpected Error");  // Show a generic error message
+    }
+};
+
+
+  
  
   return (
     <form onSubmit={handleOnSubmit} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>

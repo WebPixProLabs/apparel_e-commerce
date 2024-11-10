@@ -9,6 +9,7 @@ export const ShopContextProvider = ({ children }) => {
   const currency = "₹";
   const delivery_fee = 50;
   const backendUrl = import.meta.env.VITE_BACKEND_URL; // Ensure this is set correctly
+  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
@@ -17,10 +18,10 @@ export const ShopContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (token) {
+    if (token && userId) {
       getUserCart(token);
     }
-  }, [token]);
+  }, [token, userId]);
 
   // Function to add an item to the cart
   const addToCart = async (itemId, size) => {
@@ -111,10 +112,21 @@ export const ShopContextProvider = ({ children }) => {
 
   // Calculate the total amount of the items in the cart
   const getCartAmount = () => {
-    return Object.keys(cartItems).reduce((totalAmount, itemId) => {
+    // Ensure cartItems is always an object, even if it's null or undefined
+    const safeCartItems = cartItems || {};
+  
+    // If cartItems is empty, return 0 immediately
+    if (Object.keys(safeCartItems).length === 0) {
+      return 0;
+    }
+    
+    return Object.keys(safeCartItems).reduce((totalAmount, itemId) => {
+      // Find the product information using the itemId
       const itemInfo = products.find((product) => product._id === itemId);
+      // If the product is found, calculate the amount for this product
       if (itemInfo) {
-        Object.entries(cartItems[itemId]).forEach(([size, quantity]) => {
+        // Iterate over each size and quantity in the cart
+        Object.entries(safeCartItems[itemId]).forEach(([size, quantity]) => {
           totalAmount += itemInfo.price * quantity;
         });
       } else {
@@ -123,6 +135,7 @@ export const ShopContextProvider = ({ children }) => {
       return totalAmount;
     }, 0);
   };
+  
 
   // Fetch product data from the backend
   const getProductData = async () => {
@@ -155,6 +168,25 @@ export const ShopContextProvider = ({ children }) => {
       toast.error(error.response?.data?.message || "Error fetching cart data.");
     }
   };
+
+  const loginUser = async (loginData) => {
+    try {
+      const response = await axios.post(`${backendUrl}/api/auth/login`, loginData);
+      const { token, userId } = response.data; // Assume the response includes userId and token
+      
+      setToken(token);
+      setUserId(userId);
+      
+      // Save token and userId to local storage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
+      
+      toast.success("Logged in successfully!");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Login failed. Please try again.");
+    }
+  };
   
     
 
@@ -165,7 +197,9 @@ export const ShopContextProvider = ({ children }) => {
   useEffect(() => {
     if (!token && localStorage.getItem('token')) {
       const localToken = localStorage.getItem('token');
+      const localUserId = localStorage.getItem("userId");
       setToken(localToken);
+      setUserId(localUserId);
       getUserCart(localToken);
     }
   }, []);
@@ -177,6 +211,7 @@ export const ShopContextProvider = ({ children }) => {
     search,
     setSearch,
     showSearch,
+    setCartItems,
     setShowSearch,
     cartItems,
     addToCart,
@@ -186,8 +221,8 @@ export const ShopContextProvider = ({ children }) => {
     navigate,
     backendUrl,
     setToken,
+    userId,
     token,
-    setCartItems,
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

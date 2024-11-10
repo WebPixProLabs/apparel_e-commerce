@@ -8,11 +8,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  return jwt.sign({ id }, process.env.JWT_SECRET);
 };
 
 const createRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+  return jwt.sign({ id }, process.env.JWT_SECRET);
 };
 
 // Route for UserLogin
@@ -102,7 +102,7 @@ const AdminLogin = async (req, res) => {
 
     // Compare with environment variables
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      const accessToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const accessToken = jwt.sign({ email }, process.env.JWT_SECRET);
       const refreshToken = createRefreshToken(email); // Generates refresh token with refresh secret
 
       return res.status(200).json({ success: true, accessToken, refreshToken });

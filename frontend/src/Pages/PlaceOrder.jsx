@@ -9,7 +9,7 @@ import axios from "axios";
 
 
 const PlaceOrder = () => {
-  const { backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, } = useContext(ShopContext); // Added userId from context
+  const { token, cartItems, setCartItems, getCartAmount, delivery_fee, products, } = useContext(ShopContext); // Added userId from context
   const [method, setMethod] = useState("cod");
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -31,8 +31,8 @@ const PlaceOrder = () => {
   
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    
-    const userId = "6703652ea159a4420ec3940d";  // Your user ID here
+
+    const userId = "6703652ea159a4420ec3940d";  // Replace with dynamic user ID if needed
 
     if (!userId) {
         toast.error("User ID is required. Please log in.");
@@ -59,7 +59,7 @@ const PlaceOrder = () => {
 
         // Define the order data payload
         const orderData = {
-            userId,  // User ID is now included here
+            userId,
             items: orderItems,
             amount: getCartAmount() + delivery_fee,
             address: {
@@ -68,35 +68,45 @@ const PlaceOrder = () => {
             paymentMethod: method // 'cod' or other methods
         };
 
-        console.log("Order Data before sending:", orderData);  // Log to check the data
-
         // Access the backend URL from the environment variable
-        const backendUrl = import.meta.env.VITE_BACKEND_URL;  // Correctly access the backend URL
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
         if (!backendUrl) {
             toast.error("Backend URL is missing. Please check your environment settings.");
             return;
         }
 
-        // Send API request
-        const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        // Switch case for payment methods
+        switch (method) {
+            case 'cod':  // Case for Cash on Delivery
+                // Send API request
+                const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-        // Check the response from the server
-        if (response.data.success) {
-            setCartItems({});  // Clear cart after successful order
-            navigate('/orders');  // Redirect to orders page
-            toast.success("Order placed successfully!");  // Show success message
-        } else {
-            toast.error(response.data.message);  // Show error message from response
+                // Check the response from the server
+                if (response.data.success) {
+                    setCartItems({});  // Clear cart after successful order
+                    navigate('/orders');  // Redirect to orders page
+                    toast.success("Order placed successfully!");  // Show success message
+                } else {
+                    toast.error(response.data.message);  // Show error message from response
+                }
+                break;
+
+            default:
+                toast.error("Invalid payment method selected.");  // Show error if payment method is unrecognized
+                break;
         }
+
+        console.log("Order Data before sending:", orderData);  // Log to check the data
 
     } catch (error) {
         console.error(error);
         toast.error("Unexpected Error");  // Show a generic error message
     }
 };
+
 
 
   

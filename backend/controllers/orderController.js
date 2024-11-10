@@ -32,10 +32,8 @@ export const placeOrder = async (req, res) => {
         // Create and save the new order
         const newOrder = new orderModel(orderData);
         await newOrder.save();
-        
         // Clear user's cart data after order placement
         await userModel.findByIdAndUpdate(userId, { cartData: {} });
-        
         // Send success response
         res.status(200).json({ success: true, message: "Order Placed Successfully" });
         
@@ -64,6 +62,18 @@ export const getAllOrders = async (req, res) => {
 
 // userOrder data for frontend
 export const userOrder = async (req, res) => {
+    try {
+        const {userId} = req.body
+
+        const orders = await orderModel.find({userId})
+        res.status(200).json({success:true,message:"OrderData",orders})
+        
+    } catch (error) {
+         // Improved error handling
+         console.error('Error placing order:', error);
+         const errorMessage = error.message || "An error occurred while placing the order";
+         res.status(500).json({ success: false, message: errorMessage });
+    }
 
 };
 

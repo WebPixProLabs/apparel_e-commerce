@@ -13,31 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");  
 
-  // Handle Google OAuth Success Response
-  /*
-  const handleGoogleSuccess = (response) => {
-    if (response?.credential) {
-      // Decode the JWT to get user info
-      const userObject = JSON.parse(atob(response.credential.split(".")[1]));
-      console.log("Google User Info: ", userObject);
-
-      if (userObject && userObject.name) {
-        toast.success(`Welcome, ${userObject.name}! Login successful.`);
-        navigate("/"); // Redirect to the home page after successful login
-      } else {
-        toast.error("User info not found.");
-      }
-    } else {
-      toast.error("Invalid response from Google.");
-    }
-  };
-
-  // Handle Google OAuth Failure Response
-  const handleGoogleFailure = (error) => {
-    console.error("Google Sign-In Error: ", error);
-    toast.error("Google Sign-In Failed!");
-  };
-  */
+ 
 
   const HandleOnSubmit = async (e) => {
     e.preventDefault();
@@ -143,16 +119,6 @@ const Login = () => {
         <button className="bg-black text-white font-light px-8 py-2 mt-4">
           {currentState === "Login" ? "Sign-in" : "Sign-up"}
         </button>
-
-        {/* Google Login Button Integration */}
-        {/* 
-        <div className="mt-4">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleFailure}
-          />
-        </div>
-        */}
       </form>
     </>
   );

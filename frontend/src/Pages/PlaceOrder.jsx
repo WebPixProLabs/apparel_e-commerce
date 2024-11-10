@@ -9,7 +9,7 @@ import axios from "axios";
 
 
 const PlaceOrder = () => {
-  const { token, cartItems, setCartItems, getCartAmount, delivery_fee, products, } = useContext(ShopContext); // Added userId from context
+  const { token, cartItems, setCartItems, getCartAmount, delivery_fee, products,userId } = useContext(ShopContext);
   const [method, setMethod] = useState("cod");
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -24,6 +24,8 @@ const PlaceOrder = () => {
     phone: ''
   });
 
+  console.log("userID:" ,userId);
+
   const handleOnChange = (event) => {
     const { name, value } = event.target;
     setFormData((data) => ({ ...data, [name]: value }));
@@ -32,7 +34,7 @@ const PlaceOrder = () => {
   const handleOnSubmit = async (e) => {
     e.preventDefault();
 
-    const userId = "6703652ea159a4420ec3940d";  // Replace with dynamic user ID if needed
+    // const userId = "6703652ea159a4420ec3940d";  // Replace with dynamic user ID if needed
 
     if (!userId) {
         toast.error("User ID is required. Please log in.");
@@ -99,7 +101,7 @@ const PlaceOrder = () => {
                 break;
         }
 
-        console.log("Order Data before sending:", orderData);  // Log to check the data
+        
 
     } catch (error) {
         console.error(error);

@@ -1,12 +1,13 @@
-
+import mongoose from "mongoose";
 import orderModel from "../models/orderModel.js"
 import userModel from "../models/userModel.js"
+
+
 //place orders using COD Method:
 
 export const placeOrder = async (req, res) => {
     try {
         const { userId, items, amount, address } = req.body;
-        
         // Log the request body for debugging
         console.log('Order request body:', req.body);
         
@@ -55,27 +56,17 @@ export const placeOrderRazorPay = async (req, res) => {
 };
 
 // All orders Data for Admin Panel
-
 export const getAllOrders = async (req, res) => {
-
+   
 };
+
 
 // userOrder data for frontend
-export const userOrder = async (req, res) => {
-    try {
-        const {userId} = req.body
 
-        const orders = await orderModel.find({userId})
-        res.status(200).json({success:true,message:"OrderData",orders})
-        
-    } catch (error) {
-         // Improved error handling
-         console.error('Error placing order:', error);
-         const errorMessage = error.message || "An error occurred while placing the order";
-         res.status(500).json({ success: false, message: errorMessage });
-    }
+export const userOrder = async (req, res) => {
 
 };
+
 
 // Update Status order
 export const updateStatus = async (req, res) => {

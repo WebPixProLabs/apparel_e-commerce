@@ -1,6 +1,5 @@
-import validator from "validator";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import dotenv from "dotenv";
 
@@ -8,11 +7,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET);
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' }); // Access token expires in 1 hour
 };
 
 const createRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET);
+  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' }); // Refresh token expires in 7 days
 };
 
 // Route for UserLogin
@@ -75,7 +74,7 @@ const UserRegister = async (req, res) => {
       email,
       password: hashedPassword,
     });
-
+    
     const user = await newUser.save();
     const token = createToken(user._id);
 
@@ -91,21 +90,30 @@ const AdminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Validate input
     if (!email || !password) {
       return res.status(400).json({ success: false, msg: "Email and password are required" });
     }
 
-    // Debugging - Log to ensure the environment variables are loaded correctly
-    console.log("Admin email:", process.env.ADMIN_EMAIL);
-    console.log("JWT_SECRET:", process.env.JWT_SECRET);
-    console.log("JWT_REFRESH_SECRET:", process.env.JWT_SECRET);
-
-    // Compare with environment variables
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      const accessToken = jwt.sign({ email }, process.env.JWT_SECRET);
-      const refreshToken = createRefreshToken(email); // Generates refresh token with refresh secret
+      let user = await userModel.findOne({ email: process.env.ADMIN_EMAIL });
+      
+      if (!user) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user = new userModel({
+          name: 'Admin',
+          email: process.env.ADMIN_EMAIL,
+          password: hashedPassword,
+          role: 'admin',
+        });
+        await user.save();
+        console.log("Admin user saved to MongoDB.");
+      }
 
-      return res.status(200).json({ success: true, accessToken, refreshToken });
+      const token = jwt.sign({ email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ email, role: user.role }, process.env.JWT_REFRESH_SECRET, { expiresIn: '365d' });
+
+      return res.status(200).json({ success: true, token, refreshToken });
     } else {
       return res.status(401).json({ success: false, msg: "Invalid email or password" });
     }
@@ -115,14 +123,12 @@ const AdminLogin = async (req, res) => {
   }
 };
 
-
-
 // Route for refreshAccessToken
 export const refreshAccessToken = (req, res) => {
   const { refreshToken } = req.body;
-  if (!refreshToken) return res.status(401).json({ message: "Refresh token required" });
+  if (!refreshToken) return res.status(401).json({ message: "Missing refresh token" });
 
-  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
     if (err) return res.status(403).json({ message: "Invalid refresh token" });
 
     const newAccessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });

@@ -8,13 +8,13 @@ export const ShopContext = createContext();
 export const ShopContextProvider = ({ children }) => {
   const currency = "₹";
   const delivery_fee = 50;
-  const backendUrl = import.meta.env.VITE_BACKEND_URL; // Ensure this is set correctly
-  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL; 
+  const [userId, setUserId] = useState(null);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
   const [products, setProducts] = useState([]);
-  const [token, setToken] = useState(localStorage.getItem('token') || ''); // Initialize with the token from local storage
+  const [token, setToken] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {

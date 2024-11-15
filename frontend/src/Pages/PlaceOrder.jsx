@@ -33,9 +33,7 @@ const PlaceOrder = () => {
   
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-
-    // const userId = "6703652ea159a4420ec3940d";  // Replace with dynamic user ID if needed
-
+     const userId = "6703652ea159a4420ec3940d";  // Replace with dynamic user ID if needed
     if (!userId) {
         toast.error("User ID is required. Please log in.");
         return;
@@ -43,7 +41,6 @@ const PlaceOrder = () => {
 
     try {
         let orderItems = [];
-
         // Build orderItems array from cartItems
         for (const itemId in cartItems) {
             for (const size in cartItems[itemId]) {
@@ -100,19 +97,12 @@ const PlaceOrder = () => {
                 toast.error("Invalid payment method selected.");  // Show error if payment method is unrecognized
                 break;
         }
-
-        
-
     } catch (error) {
         console.error(error);
         toast.error("Unexpected Error");  // Show a generic error message
     }
 };
 
-
-
-  
- 
   return (
     <form onSubmit={handleOnSubmit} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
       {/* Left Side */}

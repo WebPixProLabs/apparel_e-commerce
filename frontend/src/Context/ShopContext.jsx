@@ -18,6 +18,7 @@ export const ShopContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("ShopContext values:", { token, userId, cartItems, products, search, showSearch });
     if (token && userId) {
       getUserCart(token);
     }

@@ -1,15 +1,72 @@
 // cartController.js
 import userModel from "../models/userModel.js"
+import mongoose from 'mongoose';
+import productModel from '../models/productModel.js'
+
 // Function to add items to the cart
 // Function to add items to the cart
 export const addToCart = async (req, res) => {
     try {
-        const { userId, itemId, size } = req.body;
-        const userData = await userModel.findById(userId);
+        const { userId, itemId, size, quantity = 1 } = req.body;  // Default quantity is 1
 
-        // Check if userData and cartData are defined
+        console.log("Request Body:", req.body);
+
+        // Validate request body
+        if (!userId || !itemId || !size) {
+            console.error("Missing fields in request body");
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required fields (userId, itemId, size)',
+            });
+        }
+
+        // Validate userId format
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            console.error("Invalid userId format");
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid userId',
+            });
+        }
+
+        // Validate itemId format
+        if (!mongoose.Types.ObjectId.isValid(itemId)) {
+            console.error("Invalid itemId format");
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid itemId',
+            });
+        }
+
+        // Fetch the user data
+        const userData = await userModel.findById(userId);
         if (!userData) {
-            return res.status(404).json({ success: false, message: 'User not found' });
+            console.error("User not found for userId:", userId);
+            return res.status(404).json({
+                success: false,
+                message: 'User not found',
+            });
+        }
+
+        console.log("User data retrieved:", userData);
+
+        // Fetch the product data
+        const productData = await productModel.findById(itemId);
+        if (!productData) {
+            console.error("Product not found for itemId:", itemId);
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found',
+            });
+        }
+
+        // Validate if the size exists in the product's available sizes
+        if (!productData.sizes.includes(size)) {
+            console.error(`Size ${size} not available for this product`);
+            return res.status(400).json({
+                success: false,
+                message: `Size ${size} not available for this product`,
+            });
         }
 
         // Initialize cartData if it doesn't exist
@@ -17,25 +74,33 @@ export const addToCart = async (req, res) => {
             userData.cartData = {};
         }
 
-        let cartData = userData.cartData;
-
-        // Adding items to cart
-        if (cartData[itemId]) {
-            if (cartData[itemId][size]) {
-                cartData[itemId][size] += 1; // Increment quantity
-            } else {
-                cartData[itemId][size] = 1; // Initialize quantity
-            }
-        } else {
-            cartData[itemId] = {};
-            cartData[itemId][size] = 1; // Initialize size with quantity 1
+        // Ensure cartData[itemId] is properly initialized
+        if (!userData.cartData[itemId]) {
+            userData.cartData[itemId] = {};  // Initialize the product entry
         }
 
-        await userModel.findByIdAndUpdate(userId, { cartData }, { new: true }); // Ensure new document is returned
-        res.status(200).json({ success: true, message: 'Items added to cart', cartData });
+        // Increment the quantity for the selected size
+        userData.cartData[itemId][size] = (userData.cartData[itemId][size] || 0) + quantity;
+
+        console.log("Updated cartData:", userData.cartData);
+
+        // Save updated user data
+        await userData.save();
+
+        console.log("Cart data saved successfully");
+
+        // Return success response
+        return res.status(200).json({
+            success: true,
+            message: 'Item added to cart successfully',
+            cartData: userData.cartData,  // Send the updated cart data
+        });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: 'Error adding item to cart' });
+        console.error('Error in addToCart:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: 'Error adding item to cart',
+        });
     }
 };
 

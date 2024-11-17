@@ -44,6 +44,7 @@ export const ShopContextProvider = ({ children }) => {
     if (token) {
         try {
             const response = await axios.post(`${backendUrl}/api/cart/add`, { itemId, size }, { headers: { Authorization: `Bearer ${token}` } });
+            console.log(response.data);
             // Success notification
             toast.success("Item added to cart");
             // Optionally, update cart state with the response data
@@ -61,6 +62,9 @@ export const ShopContextProvider = ({ children }) => {
         toast.success("Item added to cart successfully!"); // This will show even if token is not present
     }
 };
+
+
+
 
 
   // Get the total count of items in the cart

@@ -4,9 +4,9 @@ import toast from 'react-hot-toast';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export const currency = "₹";
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHdlYXJ0cmVuei5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsImlhdCI6MTcyODU1ODA1MiwiZXhwIjoxNzI4NTYxNjUyfQ.4B1dAzq994ODxV2WuEHPyxLmT2fgC7nSDo6X_dK78C4";
+// const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHdlYXJ0cmVuei5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsImlhdCI6MTcyODU1ODA1MiwiZXhwIjoxNzI4NTYxNjUyfQ.4B1dAzq994ODxV2WuEHPyxLmT2fgC7nSDo6X_dK78C4";
 
-const List = () => {
+const List = ({token}) => {
   const [list, setList] = useState([]);
 
   // Fetch the product list
@@ -19,8 +19,9 @@ const List = () => {
       });
       if (response.data.success) {
         setList(response.data.products);
+        toast.success("Product Fetched Success");
       } else {
-        toast.error(response.data.message);
+        toast.error("Error Fetching Products");
       }
     } catch (error) {
       console.log(error);

@@ -12,7 +12,6 @@ const Login = ({ setToken }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
         try {
             // Make API call to login endpoint
             const response = await axios.post(`${backendUrl}/api/user/admin`, { email, password },{headers: {
@@ -32,7 +31,7 @@ const Login = ({ setToken }) => {
                 toast.success("Login Successful");
     
                 // Redirect to admin dashboard or a secure route
-                navigate('/admin/dashboard'); // Use navigate() to change route
+                navigate('/list'); // Use navigate() to change route
             } else {
                 // Display error toast if login failed
                 toast.error(response.data.msg || "Login Failed");

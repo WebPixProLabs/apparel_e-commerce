@@ -9,9 +9,6 @@ const addProduct = async (req, res) => {
     // Destructure fields from request body
     const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
     
-    // Debugging log to check bestseller value
-    console.log("Received bestseller:", bestseller); 
-
     // Check and access uploaded files from req.files
     const image1 = req.files?.image1 ? req.files.image1[0] : null;
     const image2 = req.files?.image2 ? req.files.image2[0] : null;
@@ -111,8 +108,6 @@ const removeProduct = async (req, res) => {
         res.status(500).json({ success: false, message: "An error occurred while deleting the product." });
     }
 };
-
-export default removeProduct;
 
 
 // Single product info Function

@@ -2,16 +2,17 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import dotenv from "dotenv";
+import validator from "validator";
 
 // Load environment variables from .env file once
 dotenv.config();
 
 const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' }); // Access token expires in 1 hour
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '365d' }); 
 };
 
 const createRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' }); // Refresh token expires in 7 days
+  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '365d' }); 
 };
 
 // Route for UserLogin
@@ -29,11 +30,11 @@ const UserLogin = async (req, res) => {
     }
 
     // Generate access token and refresh token
-    const accessToken = createToken(user._id);
+    const token = createToken(user._id);
     const refreshToken = createRefreshToken(user._id);
 
     // Return both tokens to the client
-    return res.status(200).json({ success: true, accessToken, refreshToken, msg: "Login successful." });
+    return res.status(200).json({ success: true, token, refreshToken, msg: "Login successful." });
   } catch (e) {
     console.error(e);
     res.status(500).json({ success: false, message: e.message });

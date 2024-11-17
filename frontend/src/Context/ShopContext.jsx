@@ -176,7 +176,7 @@ export const ShopContextProvider = ({ children }) => {
 
   const loginUser = async (loginData) => {
     try {
-      const response = await axios.post(`${backendUrl}/api/auth/login`, loginData);
+      const response = await axios.post(`${backendUrl}/api/user/login`, loginData);
       const { token, userId } = response.data; // Assume the response includes userId and token
       
       setToken(token);

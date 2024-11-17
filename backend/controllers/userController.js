@@ -111,7 +111,7 @@ const AdminLogin = async (req, res) => {
         console.log("Admin user saved to MongoDB.");
       }
 
-      const token = jwt.sign({ email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '365d' });
       const refreshToken = jwt.sign({ email, role: user.role }, process.env.JWT_REFRESH_SECRET, { expiresIn: '365d' });
 
       return res.status(200).json({ success: true, token, refreshToken });

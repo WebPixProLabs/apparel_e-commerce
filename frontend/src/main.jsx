@@ -6,11 +6,9 @@ import './index.css';
 
 
 createRoot(document.getElementById('root')).render(
-  <GoogleOAuthProvider clientId={clientId}>
   <BrowserRouter>
     <ShopContextProvider>
       <App />
     </ShopContextProvider>
   </BrowserRouter>
-  </GoogleOAuthProvider>
 );

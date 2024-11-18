@@ -30,7 +30,7 @@ const RelatedProducts = ({ category, subCategory }) => {
           id={item._id}
           name={item.name}
           price={item.price}
-          image={item.image} 
+          image={item.images[0]} 
         />
       ))}      
       </div>

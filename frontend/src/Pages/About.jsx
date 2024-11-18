@@ -18,7 +18,7 @@ const About = () => {
         />
         <div className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600">
           <p className="text-base sm:text-lg leading-relaxed">
-            At our core, we believe in delivering <strong>quality</strong> and{" "}
+            At our core, we believe in delivering <strong>quality</strong> and
             <strong>innovation</strong>. Our journey began with a passion for
             excellence, and every product we create reflects our commitment to
             bringing you the best.
@@ -26,7 +26,7 @@ const About = () => {
           <p className="text-base sm:text-lg leading-relaxed">
             We understand the hustle and bustle of modern life. That’s why we
             strive to make your experience seamless, allowing you to focus on
-            what truly matters while we take care of the rest.{" "}
+            what truly matters while we take care of the rest.
             <strong>Your convenience is our mission!</strong>
           </p>
           <b className="text-gray-800 text-lg md:text-xl">Our Mission</b>
@@ -45,7 +45,7 @@ const About = () => {
         <div className="border px-6 md:px-10 lg:px-16 py-6 sm:py-8 flex flex-col gap-5 shadow-md rounded-lg">
           <b className="text-xl">Quality Assurance</b>
           <p className="text-gray-600">
-            Experience the perfect blend of <strong>quality</strong> and{" "}
+            Experience the perfect blend of <strong>quality</strong> and
             <strong>affordability</strong>. Our rigorous quality checks ensure
             that you receive only the finest products tailored to your needs.
           </p>
@@ -53,7 +53,7 @@ const About = () => {
         <div className="border px-6 md:px-10 lg:px-16 py-6 sm:py-8 flex flex-col gap-5 shadow-md rounded-lg">
           <b className="text-xl">Convenience</b>
           <p className="text-gray-600">
-            We prioritize your time. Enjoy a shopping experience that’s not only{" "}
+            We prioritize your time. Enjoy a shopping experience that’s not only
             <strong>hassle-free</strong> but also <strong>delightful</strong>.
             Your satisfaction is just a click away!
           </p>
@@ -61,7 +61,7 @@ const About = () => {
         <div className="border px-6 md:px-10 lg:px-16 py-6 sm:py-8 flex flex-col gap-5 shadow-md rounded-lg">
           <b className="text-xl">Exceptional Customer Service</b>
           <p className="text-gray-600">
-            Our dedicated team is always here for you, providing{" "}
+            Our dedicated team is always here for you, providing
             <strong>personalized support</strong> to ensure your needs are met.
             We don’t just sell products; we build relationships!
           </p>

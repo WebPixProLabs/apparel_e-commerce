@@ -64,9 +64,6 @@ export const ShopContextProvider = ({ children }) => {
 };
 
 
-
-
-
   // Get the total count of items in the cart
   
   const getCartCount = () => {

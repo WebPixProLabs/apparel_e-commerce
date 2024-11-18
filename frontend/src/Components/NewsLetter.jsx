@@ -8,7 +8,7 @@ const NewsLetter = () => {
     <div className='text-center'>
     <p className='text-2xl font-medium text-gray-800'>Subscribe Now & get 20% Discount!</p>
     <p className='text-gray-400 mt-3'>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat, laborum.
+    Be the first to know about our new arrivals, special discounts, and exclusive offers.
     </p>
     <form onSubmit={handleSubmit}  className='w-full sm:w-1/2 flex items-center gap-3 mx-auto my-6 border pl-3'>
     <input type="email" placeholder='Enter Your Email' required  className='w-full sm:flex-1 outline-none '  />

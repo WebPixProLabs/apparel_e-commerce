@@ -8,9 +8,10 @@ const Footer = () => {
         <div>
           <img src={Logo} alt="" className="mb-5 w-32" />
           <p className="w-full md:w-2/3 text-gray-600">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium
-            nam quidem debitis quia atque in voluptatibus aliquam officia quo
-            quaerat.
+            At WEARTREN-Z, we bring you the latest in trendy clothing and
+            accessories at prices that won’t break the bank. Elevate your
+            wardrobe with our curated collection of must-have styles designed
+            for every occasion.
           </p>
         </div>
         <div>
@@ -25,8 +26,9 @@ const Footer = () => {
         <div>
           <p className="text-xl font-medium mb-5">GET IN TOUCH </p>
           <ul className="flex flex-col gap-2 text-gray-500">
-            <li>+91-9150253488</li>
-            <li>webpixprolabs@gmail.com</li>
+            <li>Phone: +91-9150253488</li>
+            <li>Email: webpixprolabs@gmail.com</li>
+            <li>Location: WEARTREN-Z HQ, India</li>
           </ul>
         </div>
       </div>

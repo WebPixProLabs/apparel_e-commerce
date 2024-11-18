@@ -32,31 +32,31 @@ const Collection = () => {
 
   const applyFilter = () => {
     let productsCopy = products.slice();
-
+    // Search filter
     if (showSearch && search) {
       productsCopy = productsCopy.filter((item) =>
         item.name.toLowerCase().includes(search.toLowerCase())
       );
     }
-
+    // Category filter
     if (category.length > 0) {
       productsCopy = productsCopy.filter((item) =>
         category.includes(item.category)
       );
     }
-
+    // Subcategory filter (case-insensitive match)
     if (subCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        subCategory.includes(item.subCategory)
+        subCategory.some(
+          (sub) => sub.toLowerCase() === item.subCategory.toLowerCase()
+        )
       );
     }
-
     setFilterProducts(productsCopy);
   };
 
   const sortProduct = () => {
     let fpCopy = filterProducts.slice();
-
     switch (sortType) {
       case "low-high":
         setFilterProducts(fpCopy.sort((a, b) => a.price - b.price));
@@ -72,7 +72,7 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, subCategory, search, showSearch,products]);
+  }, [category, subCategory, search, showSearch, products]);
 
   useEffect(() => {
     sortProduct();
@@ -108,7 +108,7 @@ const Collection = () => {
                 className="w-3"
                 value={"Men"}
                 onChange={handleToggle}
-              />{" "}
+              />
               Men
             </p>
             <p className="flex gap-2">
@@ -117,7 +117,7 @@ const Collection = () => {
                 className="w-3"
                 value={"Women"}
                 onChange={handleToggle}
-              />{" "}
+              />
               Women
             </p>
             <p className="flex gap-2">
@@ -126,13 +126,12 @@ const Collection = () => {
                 className="w-3"
                 value={"Kids"}
                 onChange={handleToggle}
-              />{" "}
+              />
               Kids
             </p>
           </div>
         </div>
         {/* SubCategory Filter */}
-
         <div
           className={`border sm:block border-gray-300 pl-5 py-3 my-5 ${
             showFilter ? " " : "hidden"
@@ -146,7 +145,7 @@ const Collection = () => {
                 className="w-3"
                 value={"Topwear"}
                 onChange={handleSubcategory}
-              />{" "}
+              />
               TopWear
             </p>
             <p className="flex gap-2">
@@ -155,7 +154,7 @@ const Collection = () => {
                 className="w-3"
                 value={"Bottomwear"}
                 onChange={handleSubcategory}
-              />{" "}
+              />
               BottomWear
             </p>
             <p className="flex gap-2">
@@ -164,7 +163,7 @@ const Collection = () => {
                 className="w-3"
                 value={"Winterwear"}
                 onChange={handleSubcategory}
-              />{" "}
+              />
               WinterWear
             </p>
           </div>

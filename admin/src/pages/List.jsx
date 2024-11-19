@@ -19,7 +19,7 @@ const List = ({token}) => {
       });
       if (response.data.success) {
         setList(response.data.products);
-        toast.success("Product Fetched Success");
+        toast.success("Product Fetching Successful");
       } else {
         toast.error("Error Fetching Products");
       }

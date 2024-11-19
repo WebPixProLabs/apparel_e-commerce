@@ -3,7 +3,7 @@ import axios from "axios";
 import Logo from "../assets/admin_assets/logomain.png";
 import { backendUrl } from '../App';
 import toast from "react-hot-toast";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 const Login = ({ setToken }) => {
     const [email, setEmail] = useState('');
@@ -31,7 +31,7 @@ const Login = ({ setToken }) => {
                 toast.success("Login Successful");
     
                 // Redirect to admin dashboard or a secure route
-                navigate('/list'); // Use navigate() to change route
+                navigate('/add'); // Use navigate() to change route
             } else {
                 // Display error toast if login failed
                 toast.error(response.data.msg || "Login Failed");
@@ -39,7 +39,7 @@ const Login = ({ setToken }) => {
         } catch (error) {
             // Improve error handling by checking if error response exists
             const errorMsg = error.response?.data?.msg || "An unexpected error occurred. Please try again.";
-            console.error("Error response:", error.response); // For debugging purposes
+            console.error("Error response:", error.response); 
             toast.error(errorMsg);
         }
     };

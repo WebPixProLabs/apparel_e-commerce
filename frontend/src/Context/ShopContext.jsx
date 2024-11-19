@@ -42,6 +42,7 @@ export const ShopContextProvider = (props) => {
       toast.error("Select Product Size");
       return;
     }
+  
     const updatedCart = { ...cartItems };
     if (updatedCart[itemId]) {
       updatedCart[itemId][size] = (updatedCart[itemId][size] || 0) + 1;
@@ -50,23 +51,30 @@ export const ShopContextProvider = (props) => {
     }
     setCartItems(updatedCart);
     toast.success("Product added to cart");
-
-    // if (token) {
-    //   try {
-    //     const response = await axios.post(
-    //       `${backendUrl}/api/cart/add`,
-    //       { userId, itemId, size },
-    //       { headers: { Authorization: `Bearer ${token}` } }
-    //     );
-    //     if (!response.data.success) {
-    //       toast.error("Failed to update cart on the server.");
-    //     }
-    //   } catch (error) {
-    //     console.error("Error adding item to cart:", error);
-    //     toast.error("An error occurred while adding the item to the cart.");
-    //   }
-    // }
+  
+    if (token) {
+      try {
+        const response = await axios.post(
+          `${backendUrl}/api/cart/add`,
+          { itemId, size }, // Send only required fields
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Pass the token here
+            },
+          }
+        );
+  
+        if (!response.data.success) {
+          toast.error(response.data.message || "Failed to update cart on the server.");
+        }
+      } catch (error) {
+        // console.error("Error adding item to cart:", error.message);
+        // toast.error("An error occurred while adding the item to the cart.");
+      }
+    } 
   };
+  
+  
 
   // Update cart item quantity
   const updateQuantity = async (itemId, size, quantity) => {
@@ -80,7 +88,7 @@ export const ShopContextProvider = (props) => {
       }
     }
     setCartItems(updatedCart);
-    if (token) {
+    if (!token) {
       try {
         const response = await axios.post(
           `${backendUrl}/api/cart/update`,
@@ -133,6 +141,11 @@ export const ShopContextProvider = (props) => {
       toast.error("Failed to fetch products.");
     }
   };
+
+  useEffect(()=>{
+    getProductData();
+  },[])
+
   // Fetch user cart data
   const getUserCart = async () => {
     if (!token) return;

@@ -23,6 +23,10 @@ const Login = () => {
         if (response.data.success) {
           setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
+            // Optionally, store userId if available
+            if (response.data.userId) {
+              localStorage.setItem("userId", response.data.userId);
+            }
         } else {
           toast.error(response.data.message);
         }
@@ -32,6 +36,10 @@ const Login = () => {
         toast.success("Login successful");
         setToken(response.data.token); // Example of setting token
         localStorage.setItem("token", response.data.token);
+        // Optionally, store userId if available
+        if (response.data.userId) {
+          localStorage.setItem("userId", response.data.userId);
+        }
         navigate("/"); // Redirect after login
       }
     } catch (error) {

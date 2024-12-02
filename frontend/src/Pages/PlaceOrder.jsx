@@ -35,62 +35,96 @@ const PlaceOrder = () => {
   };
 
   // Prepare order data from cartItems
-  const prepareOrderData = () => {
-    const orderItems = [];
-    for (const itemId in cartItems) {
-      for (const size in cartItems[itemId]) {
-        const quantity = cartItems[itemId][size];
-        if (quantity > 0) {
-          const itemInfo = structuredClone(products.find(product => product._id === itemId));
-          if (itemInfo) {
-            itemInfo.size = size;
-            itemInfo.quantity = quantity;
-            orderItems.push(itemInfo);
-          }
-        }
-      }
-    }
-    return orderItems;
-  };
+  // const prepareOrderData = () => {
+  //   const orderItems = [];
+  //   console.log("Preparing order data from cart items:", cartItems);
+  //   for (const itemId in cartItems) {
+  //     for (const size in cartItems[itemId]) {
+  //       const quantity = cartItems[itemId][size];
+  //       if (quantity > 0) {
+  //         const itemInfo = structuredClone(products.find(product => product._id === itemId));
+  //         if (itemInfo) {
+  //           itemInfo.size = size;
+  //           itemInfo.quantity = quantity;
+  //           orderItems.push(itemInfo);
+  //           console.log("Added item to order:", itemInfo);
+  //         } else {
+  //           console.log(`No product found for itemId: ${itemId}`);
+  //         }
+  //       }
+  //     }
+  //   }
+  //   console.log("Prepared order items:", orderItems);
+  //   return orderItems;
+  // };
 
   // Handle form submission
   const handleOnSubmit = async (e) => {
     e.preventDefault();
+  
+    // if (!token || token === '') {
+    //   toast.error("Please log in to place an order.");
+    //   return;
+    // }
 
-    if (!token || token === '') {
-        toast.error("Please log in to place an order.");
-        return;
-    }
-
-    const orderItems = prepareOrderData();
-    const orderData = {
-        items: orderItems,
-        amount: getCartAmount() + delivery_fee,
-        address: formData,
-        userId: "67358be84ead66ed841f1de4" // Use dynamic logic if necessary
-    };
-
+    let orderItems = []
+    for (const items in cartItems) {
+      for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
+              const itemInfo = structuredClone(products.find(product => product._id === items))
+              if (itemInfo) {
+                  itemInfo.size = item
+                  itemInfo.quantity = cartItems[items][item]
+                  orderItems.push(itemInfo)
+              }
+          }
+      }
+  }
+  
+  let orderData = {
+    address: formData,
+    items: orderItems,
+    amount: getCartAmount() + delivery_fee
+}
+    
+  
+    // const orderData = {
+      // userId: userId,
+    //   items: orderItems,
+    //   amount: getCartAmount() + delivery_fee,
+    //   address: formData,
+    // };
+  
+    // Log the order data to verify the structure
+    console.log("Order Data:", orderData);
+  
     try {
-        const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (response.data && response.data.message === "Order placed successfully") {
-            setCartItems({}); // Clear cart after successful order
-            toast.success("Order placed successfully!");
-            navigate('/orders');
-        } else {
-            toast.error("Failed to place order, please try again.");
-        }
+      const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      if (response.data && response.data.message === "Order placed successfully") {
+        setCartItems({}); // Clear cart after successful order
+        toast.success("Order placed successfully!");
+        navigate('/orders');
+      } else {
+        toast.error("Failed to place order, please try again.");
+      }
     } catch (error) {
-        console.error("Error occurred while placing the order:", error);
-        toast.error("There was an issue placing the order.");
+      console.error("Error occurred while placing the order:", error);
+  
+      // Log the full error response for further debugging
+      console.log("API Error Response:", error.response?.data);
+  
+      toast.error("There was an issue placing the order.");
     } 
-};
+  };
+  
 
   // Handle payment method selection
   const handlePaymentMethodChange = (paymentMethod) => {
     setMethod(paymentMethod);
+    console.log("Selected payment method:", paymentMethod);
   };
 
   return (

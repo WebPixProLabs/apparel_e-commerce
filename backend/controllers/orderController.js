@@ -8,14 +8,13 @@ export const placeOrder = async (req, res) => {
     try {
       const { items, amount, address, userId } = req.body;
       console.log("Received userId:", userId); 
-  
       // Debugging: Check what is being received in the request body
       console.log("Request Body:", req.body);
-  
       if (!userId) {
         return res.status(400).json({ message: "userId is required" });
       }
-  
+      // Debugging: Check if userId is being passed correctly
+       console.log("User ID received from placeorder:", userId);
       // Create order with userId
       const newOrder = new orderModel({
         items,
@@ -24,11 +23,11 @@ export const placeOrder = async (req, res) => {
         userId, // userId will be passed from client
         paymentMethod: 'COD', // Assume COD (Cash on Delivery) for now
       });
-  
+
+    
       // Save the order to the database
       await newOrder.save();
       console.log("Order saved successfully:", newOrder); // Debugging: Check if the order is saved successfully
-  
       res.status(200).json({ message: 'Order placed successfully', order: newOrder });
     } catch (error) {
       console.error("Error placing order:", error); // Debugging: Log the error
@@ -36,8 +35,6 @@ export const placeOrder = async (req, res) => {
     }
   };
   
-  
-
 
 //place orders using Stripe Method
 export const placeOrderStripe = async (req, res) => {
@@ -57,6 +54,16 @@ export const getAllOrders = async (req, res) => {
 // userOrder data for frontend
 
 export const userOrder = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    console.log(req.body);
+    const orders = await orderModel.find({userId})
+    res.status(200).json({ message: 'Order placed successfully', order: orders });
+    
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({success:false,message:error.message});
+  }
 
 };
 

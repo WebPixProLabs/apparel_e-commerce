@@ -3,8 +3,8 @@ import adminAuth from "../middlewares/adminAuth.js";
 import authUser from "../middlewares/authUser.js";  
 import { 
   placeOrder, 
-  placeOrderStripe, 
-  placeOrderRazorPay, 
+  // placeOrderStripe, 
+  // placeOrderRazorPay, 
   getAllOrders, 
   userOrder, 
   updateStatus 
@@ -18,8 +18,8 @@ orderRouter.post('/status',updateStatus);
 
 // Payment Endpoints
 orderRouter.post('/place',placeOrder);
-orderRouter.post('/stripe',placeOrderStripe);
-orderRouter.post('/razorpay',placeOrderRazorPay);
+// orderRouter.post('/stripe',placeOrderStripe);
+// orderRouter.post('/razorpay',placeOrderRazorPay);
 
 // User Routes
 orderRouter.post('/userorders',userOrder);

@@ -4,36 +4,37 @@ import userModel from "../models/userModel.js"
 
 
 //place orders using COD Method:
-export const placeOrder = async (req, res) => {
-    try {
-      const { items, amount, address, userId } = req.body;
-      console.log("Received userId:", userId); 
-      // Debugging: Check what is being received in the request body
-      console.log("Request Body:", req.body);
-      if (!userId) {
-        return res.status(400).json({ message: "userId is required" });
-      }
-      // Debugging: Check if userId is being passed correctly
-       console.log("User ID received from placeorder:", userId);
-      // Create order with userId
-      const newOrder = new orderModel({
-        items,
-        amount,
-        address,
-        userId, // userId will be passed from client
-        paymentMethod: 'COD', // Assume COD (Cash on Delivery) for now
-      });
-
+export const placeOrder = async (req,res) => {
     
-      // Save the order to the database
-      await newOrder.save();
-      console.log("Order saved successfully:", newOrder); // Debugging: Check if the order is saved successfully
-      res.status(200).json({ message: 'Order placed successfully', order: newOrder });
-    } catch (error) {
-      console.error("Error placing order:", error); // Debugging: Log the error
-      res.status(500).json({ message: 'Error placing order', error });
-    }
-  };
+  try {
+      
+      const { userId, items, amount, address} = req.body;
+      console.log(req.body);
+
+      const orderData = {
+          userId,
+          items,
+          address,
+          amount,
+          paymentMethod:"COD",
+          payment:false,
+          date: Date.now()
+      }
+
+      const newOrder = new orderModel(orderData)
+      await newOrder.save()
+
+      await userModel.findByIdAndUpdate(userId,{cartData:{}})
+
+      res.json({success:true,message:"Order Placed"})
+
+
+  } catch (error) {
+      console.log(error)
+      res.json({success:false,message:error.message})
+  }
+
+}
   
 
 //place orders using Stripe Method

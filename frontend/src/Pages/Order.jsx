@@ -4,7 +4,27 @@ import Tittle from "../Components/Tittle";
 import axios from "axios";
 
 const Order = () => {
-  const { products, currency } = useContext(ShopContext);
+  
+  const { backendUrl,currency,token, userId } = useContext(ShopContext);
+  const [orderData, setOrderData] = useState([]);
+  const loadOrderData = async () => {
+    try {
+      if(!token){
+        return null;
+      }
+      const response = await axios.post(`${backendUrl}/api/order/userorders`,
+      {},{ headers: { Authorization: `Bearer ${token}` } })
+      console.log(response.data);
+      setOrderData(response.data.orders || []);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=>{
+    loadOrderData();
+  },[token])
 
   return (
     <div className="border-t pt-16">
@@ -13,7 +33,7 @@ const Order = () => {
       </div>
 
       <div>
-        {products.slice(1, 4).map((item, idx) => (
+        {orderData.map((item, idx) => (
           <div
             key={idx}
             className="py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4"

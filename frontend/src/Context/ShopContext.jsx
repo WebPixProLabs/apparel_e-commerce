@@ -9,7 +9,6 @@ export const ShopContextProvider = (props) => {
   const currency = "₹";
   const delivery_fee = 50;
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  
   const [token, setToken] = useState('');
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -17,30 +16,7 @@ export const ShopContextProvider = (props) => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
-  
 
-  // Fetch product and cart data on initial load
-  // useEffect(() => {
-  //   if (token && userId) {
-  //     getUserCart();
-  //   }
-  //   getProductData();
-  // }, []);
-
-  useEffect(()=>{
-    getProductData()
-  },[])
-
-  // Sync token and userId on app reload
-  useEffect(() => {
-    if (!token && localStorage.getItem('token')) {
-        setToken(localStorage.getItem('token'))
-        getUserCart(localStorage.getItem('token'))
-    }
-    if (token) {
-        getUserCart(token)
-    }
-}, [token])
 
   // Add to cart functionality
   const addToCart = async (itemId, size) => {
@@ -172,24 +148,18 @@ export const ShopContextProvider = (props) => {
       toast.error("An error occurred while loading the cart.");
     }
   };
-  // User login
-  // const loginUser = async (loginData) => {
-  //   try {
-  //     const response = await axios.post(
-  //       `${backendUrl}/api/user/login`,
-  //       loginData
-  //     );
-  //     const { token: authToken, userId: authUserId } = response.data;
-  //     setToken(authToken);
-  //     setUserId(authUserId);
-  //     localStorage.setItem("token", authToken);
-  //     localStorage.setItem("userId", authUserId);
-  //     toast.success("Login successful.");
-  //   } catch (error) {
-  //     console.error("Login error:", error);
-  //     toast.error("Login failed.");
-  //   }
-  // };
+ 
+
+  // Sync token and userId on app reload
+  useEffect(() => {
+    if (!token && localStorage.getItem('token')) {
+        setToken(localStorage.getItem('token'))
+        getUserCart(localStorage.getItem('token'))
+    }
+    if (token) {
+        getUserCart(token)
+    }
+}, [token])
 
   const value = {
     products,
@@ -211,9 +181,6 @@ export const ShopContextProvider = (props) => {
     backendUrl,
     setToken,
     token,
-    
-    // decodeToken
-    // loginUser,
   };
 
   return (

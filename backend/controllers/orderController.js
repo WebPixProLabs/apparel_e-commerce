@@ -73,4 +73,13 @@ export const userOrder = async (req, res) => {
 
 
 // Update Status order
-export const updateStatus = async (req, res) => {};
+export const updateStatus = async (req, res) => {
+  try {
+    const {orderId,status} = req.body;
+    await orderModel.findByIdAndUpdate(orderId,{status})
+    res.status(200).json({success:true,message:"Order Status Updated"});
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({success:false,message:error.message || "Error in Updating Order Status"})
+  }
+};

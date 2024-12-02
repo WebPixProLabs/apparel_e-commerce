@@ -1,4 +1,5 @@
 node_modules
-dummy.txt
-uploads
+│   ├── node_modules
+
 *.env
+dummy.txt

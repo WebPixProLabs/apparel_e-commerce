@@ -25,6 +25,7 @@ const PlaceOrder = () => {
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+
   // Handle form input changes
   const handleOnChange = (event) => {
     const { name, value } = event.target;
@@ -34,91 +35,67 @@ const PlaceOrder = () => {
     }));
   };
 
-  // Prepare order data from cartItems
-  // const prepareOrderData = () => {
-  //   const orderItems = [];
-  //   console.log("Preparing order data from cart items:", cartItems);
-  //   for (const itemId in cartItems) {
-  //     for (const size in cartItems[itemId]) {
-  //       const quantity = cartItems[itemId][size];
-  //       if (quantity > 0) {
-  //         const itemInfo = structuredClone(products.find(product => product._id === itemId));
-  //         if (itemInfo) {
-  //           itemInfo.size = size;
-  //           itemInfo.quantity = quantity;
-  //           orderItems.push(itemInfo);
-  //           console.log("Added item to order:", itemInfo);
-  //         } else {
-  //           console.log(`No product found for itemId: ${itemId}`);
-  //         }
-  //       }
-  //     }
-  //   }
-  //   console.log("Prepared order items:", orderItems);
-  //   return orderItems;
-  // };
 
   // Handle form submission
   const handleOnSubmit = async (e) => {
     e.preventDefault();
   
-    // if (!token || token === '') {
-    //   toast.error("Please log in to place an order.");
-    //   return;
-    // }
-
-    let orderItems = []
+    if (!token || token === '') {
+      toast.error("Please log in to place an order.");
+      return;
+    }
+  
+    let orderItems = [];
     for (const items in cartItems) {
       for (const item in cartItems[items]) {
-          if (cartItems[items][item] > 0) {
-              const itemInfo = structuredClone(products.find(product => product._id === items))
-              if (itemInfo) {
-                  itemInfo.size = item
-                  itemInfo.quantity = cartItems[items][item]
-                  orderItems.push(itemInfo)
-              }
+        if (cartItems[items][item] > 0) {
+          const itemInfo = structuredClone(products.find(product => product._id === items));
+          if (itemInfo) {
+            itemInfo.size = item;
+            itemInfo.quantity = cartItems[items][item];
+            orderItems.push(itemInfo);
           }
+        }
       }
-  }
+    }
   
-  let orderData = {
-    address: formData,
-    items: orderItems,
-    amount: getCartAmount() + delivery_fee
-}
-    
+    const userId = "67358be84ead66ed841f1de4";
+    const orderData = {
+      userId,
+      items: orderItems,
+      amount: getCartAmount() + delivery_fee,
+      address: formData,
+    };
   
-    // const orderData = {
-      // userId: userId,
-    //   items: orderItems,
-    //   amount: getCartAmount() + delivery_fee,
-    //   address: formData,
-    // };
-  
-    // Log the order data to verify the structure
     console.log("Order Data:", orderData);
   
     try {
       const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
   
-      if (response.data && response.data.message === "Order placed successfully") {
+      console.log("API Response:", response.data);
+  
+      if (response.data && response.data.success && response.data.message?.toLowerCase() === "order placed") {
         setCartItems({}); // Clear cart after successful order
         toast.success("Order placed successfully!");
+        console.log("Navigating to orders...");
         navigate('/orders');
       } else {
-        toast.error("Failed to place order, please try again.");
+        toast.error("Unexpected response from the server.");
+        console.log("Unexpected Response:", response.data);
       }
     } catch (error) {
       console.error("Error occurred while placing the order:", error);
   
-      // Log the full error response for further debugging
-      console.log("API Error Response:", error.response?.data);
-  
+      // Log full error details for further debugging
+      if (error.response) {
+        console.log("API Error Response:", error.response.data);
+      }
       toast.error("There was an issue placing the order.");
-    } 
+    }
   };
+  
   
 
   // Handle payment method selection

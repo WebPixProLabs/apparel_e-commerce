@@ -23,11 +23,12 @@ const UserLogin = async (req, res) => {
     if (!user) {
       return res.status(400).json({ success: false, msg: "User does not exist" });
     }
-
+    console.log("User found from Login:", user);
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return res.status(400).json({ success: false, msg: "Invalid credentials." });
     }
+    console.log("User ID from Login:", user._id);
 
     // Generate access token and refresh token
     const token = createToken(user._id);
@@ -64,7 +65,7 @@ const UserRegister = async (req, res) => {
     if (password.length < 8) {
       return res.status(400).json({ success: false, msg: "Please enter a strong password (minimum 8 characters)." });
     }
-
+    
     // Hashing password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -78,12 +79,14 @@ const UserRegister = async (req, res) => {
     
     const user = await newUser.save();
     const token = createToken(user._id);
+    
 
     res.status(201).json({ success: true, token });
   } catch (e) {
     console.error(e);
     res.status(500).json({ success: false, message: e.message });
   }
+  console.log("User ID from register:", user._id);
 };
 
 // Route for AdminLogin

@@ -79,7 +79,6 @@ const PlaceOrder = () => {
       if (response.data && response.data.success && response.data.message?.toLowerCase() === "order placed") {
         setCartItems({}); // Clear cart after successful order
         toast.success("Order placed successfully!");
-        console.log("Navigating to orders...");
         navigate('/orders');
       } else {
         toast.error("Unexpected response from the server.");

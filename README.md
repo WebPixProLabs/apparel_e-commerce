@@ -78,8 +78,8 @@ Make sure you have the following installed on your local development machine:
  You can check out the live version of the app [here](#). http://localhost:3000 
 
 ##Deployment Links
-frontend: apparel-e-commerce.vercel.app
-admin panel: apparel-e-commerce-sdoj.vercel.app
+frontend: https://apparel-e-commerce.vercel.app/
+admin panel: https://apparel-e-commerce-sdoj.vercel.app/ 
 backend: https://apparel-e-commerce-backend.onrender.com/
 
 ##Deployment Done

@@ -77,5 +77,16 @@ Make sure you have the following installed on your local development machine:
  4. LiveURL: 
  You can check out the live version of the app [here](#). http://localhost:3000 
 
+##Deployment Links
+frontend: apparel-e-commerce.vercel.app
+admin panel: apparel-e-commerce-sdoj.vercel.app
+backend: https://apparel-e-commerce-backend.onrender.com/
+
+##Deployment Done
+Frontend : Vercel
+Admin Panel: Vercel
+Backend : Render 
+
+
 
 

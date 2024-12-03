@@ -79,7 +79,9 @@ Make sure you have the following installed on your local development machine:
 
 ##Deployment Links
 frontend: https://apparel-e-commerce.vercel.app/
+
 admin panel: https://apparel-e-commerce-sdoj.vercel.app/ 
+
 backend: https://apparel-e-commerce-backend.onrender.com/
 
 ##Deployment Done
